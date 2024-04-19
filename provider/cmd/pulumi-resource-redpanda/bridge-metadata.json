@@ -1,1 +1,46 @@
-{}
+{
+    "auto-aliasing": {
+        "resources": {
+            "redpanda_acl": {
+                "current": "redpanda:index/acl:Acl"
+            },
+            "redpanda_cluster": {
+                "current": "redpanda:index/cluster:Cluster",
+                "fields": {
+                    "zones": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "redpanda_namespace": {
+                "current": "redpanda:index/namespace:Namespace"
+            },
+            "redpanda_network": {
+                "current": "redpanda:index/network:Network"
+            },
+            "redpanda_topic": {
+                "current": "redpanda:index/topic:Topic"
+            },
+            "redpanda_user": {
+                "current": "redpanda:index/user:User"
+            }
+        },
+        "datasources": {
+            "redpanda_cluster": {
+                "current": "redpanda:index/getCluster:getCluster",
+                "fields": {
+                    "zones": {
+                        "maxItemsOne": false
+                    }
+                }
+            },
+            "redpanda_namespace": {
+                "current": "redpanda:index/getNamespace:getNamespace"
+            },
+            "redpanda_network": {
+                "current": "redpanda:index/getNetwork:getNetwork"
+            }
+        }
+    },
+    "auto-settings": {}
+}

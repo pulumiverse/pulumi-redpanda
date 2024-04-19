@@ -1,0 +1,918 @@
+{
+    "name": "redpanda",
+    "description": "A Pulumi package for creating and managing redpanda cloud resources.",
+    "keywords": [
+        "videmsky",
+        "redpanda",
+        "category/cloud"
+    ],
+    "homepage": "https://www.pulumi.com",
+    "license": "Apache-2.0",
+    "attribution": "This Pulumi package is based on the [`redpanda` Terraform Provider](https://github.com/redpanda-data/terraform-provider-redpanda).",
+    "repository": "https://github.com/videmsky/pulumi-redpanda",
+    "publisher": "videmsky",
+    "meta": {
+        "moduleFormat": "(.*)(?:/[^/]*)"
+    },
+    "language": {
+        "csharp": {
+            "packageReferences": {
+                "Pulumi": "3.*"
+            },
+            "compatibility": "tfbridge20"
+        },
+        "go": {
+            "importBasePath": "github.com/videmsky/pulumi-redpanda/sdk/go/redpanda",
+            "generateResourceContainerTypes": true,
+            "generateExtraInputTypes": true
+        },
+        "nodejs": {
+            "packageDescription": "A Pulumi package for creating and managing redpanda cloud resources.",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/redpanda-data/terraform-provider-redpanda)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-redpanda` repo](https://github.com/videmsky/pulumi-redpanda/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-redpanda` repo](https://github.com/redpanda-data/terraform-provider-redpanda/issues).",
+            "dependencies": {
+                "@pulumi/pulumi": "^3.0.0"
+            },
+            "devDependencies": {
+                "@types/mime": "^2.0.0",
+                "@types/node": "^10.0.0"
+            },
+            "compatibility": "tfbridge20",
+            "disableUnionOutputTypes": true
+        },
+        "python": {
+            "requires": {
+                "pulumi": "\u003e=3.0.0,\u003c4.0.0"
+            },
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/redpanda-data/terraform-provider-redpanda)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-redpanda` repo](https://github.com/videmsky/pulumi-redpanda/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-redpanda` repo](https://github.com/redpanda-data/terraform-provider-redpanda/issues).",
+            "compatibility": "tfbridge20",
+            "pyproject": {}
+        }
+    },
+    "config": {
+        "variables": {
+            "clientId": {
+                "type": "string",
+                "description": "The id for the client. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            },
+            "clientSecret": {
+                "type": "string",
+                "description": "Redpanda client secret. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            }
+        }
+    },
+    "provider": {
+        "description": "The provider type for the redpanda package. By default, resources use package-wide configuration\nsettings, however an explicit `Provider` instance may be created and passed during resource\nconstruction to achieve fine-grained programmatic control over provider settings. See the\n[documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.\n",
+        "properties": {
+            "clientId": {
+                "type": "string",
+                "description": "The id for the client. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            },
+            "clientSecret": {
+                "type": "string",
+                "description": "Redpanda client secret. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            }
+        },
+        "inputProperties": {
+            "clientId": {
+                "type": "string",
+                "description": "The id for the client. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            },
+            "clientSecret": {
+                "type": "string",
+                "description": "Redpanda client secret. You need client_id AND client_secret to use this provider\n",
+                "secret": true
+            }
+        }
+    },
+    "resources": {
+        "redpanda:index/acl:Acl": {
+            "description": "Creates an Access Control List (ACL) in a Redpanda cluster.\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst testNamespace = new redpanda.Namespace(\"testNamespace\", {});\nconst config = new pulumi.Config();\nconst region = config.get(\"region\") || \"us-east-1\";\nconst cloudProvider = config.get(\"cloudProvider\") || \"aws\";\nconst testNetwork = new redpanda.Network(\"testNetwork\", {\n    namespaceId: testNamespace.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    cidrBlock: \"10.0.0.0/20\",\n});\nconst zones = config.getObject(\"zones\") || [\n    \"use1-az2\",\n    \"use1-az4\",\n    \"use1-az6\",\n];\nconst throughputTier = config.get(\"throughputTier\") || \"tier-1-aws-v2-arm\";\nconst testCluster = new redpanda.Cluster(\"testCluster\", {\n    namespaceId: testNamespace.id,\n    networkId: testNetwork.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    connectionType: \"public\",\n    throughputTier: throughputTier,\n    zones: zones,\n    allowDeletion: true,\n    tags: {\n        key: \"value\",\n    },\n});\nconst userPw = config.get(\"userPw\") || \"password\";\nconst mechanism = config.get(\"mechanism\") || \"scram-sha-256\";\nconst testUser = new redpanda.User(\"testUser\", {\n    password: userPw,\n    mechanism: mechanism,\n    clusterApiUrl: testCluster.clusterApiUrl,\n});\nconst partitionCount = config.getNumber(\"partitionCount\") || 3;\nconst replicationFactor = config.getNumber(\"replicationFactor\") || 3;\nconst testTopic = new redpanda.Topic(\"testTopic\", {\n    partitionCount: partitionCount,\n    replicationFactor: replicationFactor,\n    clusterApiUrl: testCluster.clusterApiUrl,\n    allowDeletion: true,\n});\nconst testAcl = new redpanda.Acl(\"testAcl\", {\n    resourceType: \"TOPIC\",\n    resourceName: testTopic.name,\n    resourcePatternType: \"LITERAL\",\n    principal: pulumi.interpolate`User:${testUser.name}`,\n    host: \"*\",\n    operation: \"READ\",\n    permissionType: \"ALLOW\",\n    clusterApiUrl: testCluster.clusterApiUrl,\n});\nconst namespaceName = config.get(\"namespaceName\") || \"testname\";\nconst networkName = config.get(\"networkName\") || \"testname\";\nconst clusterName = config.get(\"clusterName\") || \"testname\";\nconst userName = config.get(\"userName\") || \"test-username\";\nconst topicName = config.get(\"topicName\") || \"test-topic\";\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\ntest_namespace = redpanda.Namespace(\"testNamespace\")\nconfig = pulumi.Config()\nregion = config.get(\"region\")\nif region is None:\n    region = \"us-east-1\"\ncloud_provider = config.get(\"cloudProvider\")\nif cloud_provider is None:\n    cloud_provider = \"aws\"\ntest_network = redpanda.Network(\"testNetwork\",\n    namespace_id=test_namespace.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    cidr_block=\"10.0.0.0/20\")\nzones = config.get_object(\"zones\")\nif zones is None:\n    zones = [\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    ]\nthroughput_tier = config.get(\"throughputTier\")\nif throughput_tier is None:\n    throughput_tier = \"tier-1-aws-v2-arm\"\ntest_cluster = redpanda.Cluster(\"testCluster\",\n    namespace_id=test_namespace.id,\n    network_id=test_network.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    connection_type=\"public\",\n    throughput_tier=throughput_tier,\n    zones=zones,\n    allow_deletion=True,\n    tags={\n        \"key\": \"value\",\n    })\nuser_pw = config.get(\"userPw\")\nif user_pw is None:\n    user_pw = \"password\"\nmechanism = config.get(\"mechanism\")\nif mechanism is None:\n    mechanism = \"scram-sha-256\"\ntest_user = redpanda.User(\"testUser\",\n    password=user_pw,\n    mechanism=mechanism,\n    cluster_api_url=test_cluster.cluster_api_url)\npartition_count = config.get_float(\"partitionCount\")\nif partition_count is None:\n    partition_count = 3\nreplication_factor = config.get_float(\"replicationFactor\")\nif replication_factor is None:\n    replication_factor = 3\ntest_topic = redpanda.Topic(\"testTopic\",\n    partition_count=partition_count,\n    replication_factor=replication_factor,\n    cluster_api_url=test_cluster.cluster_api_url,\n    allow_deletion=True)\ntest_acl = redpanda.Acl(\"testAcl\",\n    resource_type=\"TOPIC\",\n    resource_name_=test_topic.name,\n    resource_pattern_type=\"LITERAL\",\n    principal=test_user.name.apply(lambda name: f\"User:{name}\"),\n    host=\"*\",\n    operation=\"READ\",\n    permission_type=\"ALLOW\",\n    cluster_api_url=test_cluster.cluster_api_url)\nnamespace_name = config.get(\"namespaceName\")\nif namespace_name is None:\n    namespace_name = \"testname\"\nnetwork_name = config.get(\"networkName\")\nif network_name is None:\n    network_name = \"testname\"\ncluster_name = config.get(\"clusterName\")\nif cluster_name is None:\n    cluster_name = \"testname\"\nuser_name = config.get(\"userName\")\nif user_name is None:\n    user_name = \"test-username\"\ntopic_name = config.get(\"topicName\")\nif topic_name is None:\n    topic_name = \"test-topic\"\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var testNamespace = new Redpanda.Namespace(\"testNamespace\");\n\n    var config = new Config();\n    var region = config.Get(\"region\") ?? \"us-east-1\";\n    var cloudProvider = config.Get(\"cloudProvider\") ?? \"aws\";\n    var testNetwork = new Redpanda.Network(\"testNetwork\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        CidrBlock = \"10.0.0.0/20\",\n    });\n\n    var zones = config.GetObject\u003cdynamic\u003e(\"zones\") ?? new[]\n    {\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    };\n    var throughputTier = config.Get(\"throughputTier\") ?? \"tier-1-aws-v2-arm\";\n    var testCluster = new Redpanda.Cluster(\"testCluster\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        NetworkId = testNetwork.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        ConnectionType = \"public\",\n        ThroughputTier = throughputTier,\n        Zones = zones,\n        AllowDeletion = true,\n        Tags = \n        {\n            { \"key\", \"value\" },\n        },\n    });\n\n    var userPw = config.Get(\"userPw\") ?? \"password\";\n    var mechanism = config.Get(\"mechanism\") ?? \"scram-sha-256\";\n    var testUser = new Redpanda.User(\"testUser\", new()\n    {\n        Password = userPw,\n        Mechanism = mechanism,\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n    });\n\n    var partitionCount = config.GetDouble(\"partitionCount\") ?? 3;\n    var replicationFactor = config.GetDouble(\"replicationFactor\") ?? 3;\n    var testTopic = new Redpanda.Topic(\"testTopic\", new()\n    {\n        PartitionCount = partitionCount,\n        ReplicationFactor = replicationFactor,\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n        AllowDeletion = true,\n    });\n\n    var testAcl = new Redpanda.Acl(\"testAcl\", new()\n    {\n        ResourceType = \"TOPIC\",\n        ResourceName = testTopic.Name,\n        ResourcePatternType = \"LITERAL\",\n        Principal = testUser.Name.Apply(name =\u003e $\"User:{name}\"),\n        Host = \"*\",\n        Operation = \"READ\",\n        PermissionType = \"ALLOW\",\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n    });\n\n    var namespaceName = config.Get(\"namespaceName\") ?? \"testname\";\n    var networkName = config.Get(\"networkName\") ?? \"testname\";\n    var clusterName = config.Get(\"clusterName\") ?? \"testname\";\n    var userName = config.Get(\"userName\") ?? \"test-username\";\n    var topicName = config.Get(\"topicName\") ?? \"test-topic\";\n});\n```\n```go\npackage main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\ttestNamespace, err := redpanda.NewNamespace(ctx, \"testNamespace\", nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tcfg := config.New(ctx, \"\")\n\t\tregion := \"us-east-1\"\n\t\tif param := cfg.Get(\"region\"); param != \"\" {\n\t\t\tregion = param\n\t\t}\n\t\tcloudProvider := \"aws\"\n\t\tif param := cfg.Get(\"cloudProvider\"); param != \"\" {\n\t\t\tcloudProvider = param\n\t\t}\n\t\ttestNetwork, err := redpanda.NewNetwork(ctx, \"testNetwork\", \u0026redpanda.NetworkArgs{\n\t\t\tNamespaceId:   testNamespace.ID(),\n\t\t\tCloudProvider: pulumi.String(cloudProvider),\n\t\t\tRegion:        pulumi.String(region),\n\t\t\tClusterType:   pulumi.String(\"dedicated\"),\n\t\t\tCidrBlock:     pulumi.String(\"10.0.0.0/20\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tzones := []string{\n\t\t\t\"use1-az2\",\n\t\t\t\"use1-az4\",\n\t\t\t\"use1-az6\",\n\t\t}\n\t\tif param := cfg.GetObject(\"zones\"); param != nil {\n\t\t\tzones = param\n\t\t}\n\t\tthroughputTier := \"tier-1-aws-v2-arm\"\n\t\tif param := cfg.Get(\"throughputTier\"); param != \"\" {\n\t\t\tthroughputTier = param\n\t\t}\n\t\ttestCluster, err := redpanda.NewCluster(ctx, \"testCluster\", \u0026redpanda.ClusterArgs{\n\t\t\tNamespaceId:    testNamespace.ID(),\n\t\t\tNetworkId:      testNetwork.ID(),\n\t\t\tCloudProvider:  pulumi.String(cloudProvider),\n\t\t\tRegion:         pulumi.String(region),\n\t\t\tClusterType:    pulumi.String(\"dedicated\"),\n\t\t\tConnectionType: pulumi.String(\"public\"),\n\t\t\tThroughputTier: pulumi.String(throughputTier),\n\t\t\tZones:          pulumi.Any(zones),\n\t\t\tAllowDeletion:  pulumi.Bool(true),\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"key\": pulumi.String(\"value\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserPw := \"password\"\n\t\tif param := cfg.Get(\"userPw\"); param != \"\" {\n\t\t\tuserPw = param\n\t\t}\n\t\tmechanism := \"scram-sha-256\"\n\t\tif param := cfg.Get(\"mechanism\"); param != \"\" {\n\t\t\tmechanism = param\n\t\t}\n\t\ttestUser, err := redpanda.NewUser(ctx, \"testUser\", \u0026redpanda.UserArgs{\n\t\t\tPassword:      pulumi.String(userPw),\n\t\t\tMechanism:     pulumi.String(mechanism),\n\t\t\tClusterApiUrl: testCluster.ClusterApiUrl,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tpartitionCount := float64(3)\n\t\tif param := cfg.GetFloat64(\"partitionCount\"); param != 0 {\n\t\t\tpartitionCount = param\n\t\t}\n\t\treplicationFactor := float64(3)\n\t\tif param := cfg.GetFloat64(\"replicationFactor\"); param != 0 {\n\t\t\treplicationFactor = param\n\t\t}\n\t\ttestTopic, err := redpanda.NewTopic(ctx, \"testTopic\", \u0026redpanda.TopicArgs{\n\t\t\tPartitionCount:    pulumi.Float64(partitionCount),\n\t\t\tReplicationFactor: pulumi.Float64(replicationFactor),\n\t\t\tClusterApiUrl:     testCluster.ClusterApiUrl,\n\t\t\tAllowDeletion:     pulumi.Bool(true),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = redpanda.NewAcl(ctx, \"testAcl\", \u0026redpanda.AclArgs{\n\t\t\tResourceType:        pulumi.String(\"TOPIC\"),\n\t\t\tResourceName:        testTopic.Name,\n\t\t\tResourcePatternType: pulumi.String(\"LITERAL\"),\n\t\t\tPrincipal: testUser.Name.ApplyT(func(name string) (string, error) {\n\t\t\t\treturn fmt.Sprintf(\"User:%v\", name), nil\n\t\t\t}).(pulumi.StringOutput),\n\t\t\tHost:           pulumi.String(\"*\"),\n\t\t\tOperation:      pulumi.String(\"READ\"),\n\t\t\tPermissionType: pulumi.String(\"ALLOW\"),\n\t\t\tClusterApiUrl:  testCluster.ClusterApiUrl,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tnamespaceName := \"testname\"\n\t\tif param := cfg.Get(\"namespaceName\"); param != \"\" {\n\t\t\tnamespaceName = param\n\t\t}\n\t\tnetworkName := \"testname\"\n\t\tif param := cfg.Get(\"networkName\"); param != \"\" {\n\t\t\tnetworkName = param\n\t\t}\n\t\tclusterName := \"testname\"\n\t\tif param := cfg.Get(\"clusterName\"); param != \"\" {\n\t\t\tclusterName = param\n\t\t}\n\t\tuserName := \"test-username\"\n\t\tif param := cfg.Get(\"userName\"); param != \"\" {\n\t\t\tuserName = param\n\t\t}\n\t\ttopicName := \"test-topic\"\n\t\tif param := cfg.Get(\"topicName\"); param != \"\" {\n\t\t\ttopicName = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.Namespace;\nimport com.pulumi.redpanda.Network;\nimport com.pulumi.redpanda.NetworkArgs;\nimport com.pulumi.redpanda.Cluster;\nimport com.pulumi.redpanda.ClusterArgs;\nimport com.pulumi.redpanda.User;\nimport com.pulumi.redpanda.UserArgs;\nimport com.pulumi.redpanda.Topic;\nimport com.pulumi.redpanda.TopicArgs;\nimport com.pulumi.redpanda.Acl;\nimport com.pulumi.redpanda.AclArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        var testNamespace = new Namespace(\"testNamespace\");\n\n        final var region = config.get(\"region\").orElse(\"us-east-1\");\n        final var cloudProvider = config.get(\"cloudProvider\").orElse(\"aws\");\n        var testNetwork = new Network(\"testNetwork\", NetworkArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .cidrBlock(\"10.0.0.0/20\")\n            .build());\n\n        final var zones = config.get(\"zones\").orElse(        \n            \"use1-az2\",\n            \"use1-az4\",\n            \"use1-az6\");\n        final var throughputTier = config.get(\"throughputTier\").orElse(\"tier-1-aws-v2-arm\");\n        var testCluster = new Cluster(\"testCluster\", ClusterArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .networkId(testNetwork.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .connectionType(\"public\")\n            .throughputTier(throughputTier)\n            .zones(zones)\n            .allowDeletion(true)\n            .tags(Map.of(\"key\", \"value\"))\n            .build());\n\n        final var userPw = config.get(\"userPw\").orElse(\"password\");\n        final var mechanism = config.get(\"mechanism\").orElse(\"scram-sha-256\");\n        var testUser = new User(\"testUser\", UserArgs.builder()        \n            .password(userPw)\n            .mechanism(mechanism)\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .build());\n\n        final var partitionCount = config.get(\"partitionCount\").orElse(3);\n        final var replicationFactor = config.get(\"replicationFactor\").orElse(3);\n        var testTopic = new Topic(\"testTopic\", TopicArgs.builder()        \n            .partitionCount(partitionCount)\n            .replicationFactor(replicationFactor)\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .allowDeletion(true)\n            .build());\n\n        var testAcl = new Acl(\"testAcl\", AclArgs.builder()        \n            .resourceType(\"TOPIC\")\n            .resourceName(testTopic.name())\n            .resourcePatternType(\"LITERAL\")\n            .principal(testUser.name().applyValue(name -\u003e String.format(\"User:%s\", name)))\n            .host(\"*\")\n            .operation(\"READ\")\n            .permissionType(\"ALLOW\")\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .build());\n\n        final var namespaceName = config.get(\"namespaceName\").orElse(\"testname\");\n        final var networkName = config.get(\"networkName\").orElse(\"testname\");\n        final var clusterName = config.get(\"clusterName\").orElse(\"testname\");\n        final var userName = config.get(\"userName\").orElse(\"test-username\");\n        final var topicName = config.get(\"topicName\").orElse(\"test-topic\");\n    }\n}\n```\n```yaml\nconfiguration:\n  namespaceName:\n    type: string\n    default: testname\n  networkName:\n    type: string\n    default: testname\n  clusterName:\n    type: string\n    default: testname\n  region:\n    type: string\n    default: us-east-1\n  zones:\n    type: dynamic\n    default:\n      - use1-az2\n      - use1-az4\n      - use1-az6\n  cloudProvider:\n    type: string\n    default: aws\n  throughputTier:\n    type: string\n    default: tier-1-aws-v2-arm\n  userName:\n    type: string\n    default: test-username\n  userPw:\n    type: string\n    default: password\n  mechanism:\n    type: string\n    default: scram-sha-256\n  topicName:\n    type: string\n    default: test-topic\n  partitionCount:\n    type: number\n    default: 3\n  replicationFactor:\n    type: number\n    default: 3\nresources:\n  testNamespace:\n    type: redpanda:Namespace\n  testNetwork:\n    type: redpanda:Network\n    properties:\n      namespaceId: ${testNamespace.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      cidrBlock: 10.0.0.0/20\n  testCluster:\n    type: redpanda:Cluster\n    properties:\n      namespaceId: ${testNamespace.id}\n      networkId: ${testNetwork.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      connectionType: public\n      throughputTier: ${throughputTier}\n      zones: ${zones}\n      allowDeletion: true\n      tags:\n        key: value\n  testUser:\n    type: redpanda:User\n    properties:\n      password: ${userPw}\n      mechanism: ${mechanism}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n  testTopic:\n    type: redpanda:Topic\n    properties:\n      partitionCount: ${partitionCount}\n      replicationFactor: ${replicationFactor}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n      allowDeletion: true\n  testAcl:\n    type: redpanda:Acl\n    properties:\n      resourceType: TOPIC\n      resourceName: ${testTopic.name}\n      resourcePatternType: LITERAL\n      principal: User:${testUser.name}\n      host: '*'\n      operation: READ\n      permissionType: ALLOW\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Limitations\n\nWe are not currently able to support ACL creation in self hosted clusters. This is an area of active development so expect that to change soon.\n\n## Import\n\nWe do not support the import of ACLs into the Redpanda provider at this time.\n\n",
+            "properties": {
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "host": {
+                    "type": "string",
+                    "description": "The host address to use for this ACL\n"
+                },
+                "operation": {
+                    "type": "string",
+                    "description": "The operation type that shall be allowed or denied (e.g READ)\n"
+                },
+                "permissionType": {
+                    "type": "string",
+                    "description": "The permission type. It determines whether the operation should be ALLOWED or DENIED\n"
+                },
+                "principal": {
+                    "type": "string",
+                    "description": "The principal to apply this ACL for\n"
+                },
+                "resourceName": {
+                    "type": "string",
+                    "description": "The name of the resource this ACL entry will be on\n"
+                },
+                "resourcePatternType": {
+                    "type": "string",
+                    "description": "The pattern type of the resource. It determines the strategy how the provided resource name is matched (LITERAL, MATCH, PREFIXED, etc ...) against the actual resource names\n"
+                },
+                "resourceType": {
+                    "type": "string",
+                    "description": "The type of the resource (TOPIC, GROUP, etc...) this ACL shall target\n"
+                }
+            },
+            "required": [
+                "clusterApiUrl",
+                "host",
+                "operation",
+                "permissionType",
+                "principal",
+                "resourceName",
+                "resourcePatternType",
+                "resourceType"
+            ],
+            "inputProperties": {
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "host": {
+                    "type": "string",
+                    "description": "The host address to use for this ACL\n"
+                },
+                "operation": {
+                    "type": "string",
+                    "description": "The operation type that shall be allowed or denied (e.g READ)\n"
+                },
+                "permissionType": {
+                    "type": "string",
+                    "description": "The permission type. It determines whether the operation should be ALLOWED or DENIED\n"
+                },
+                "principal": {
+                    "type": "string",
+                    "description": "The principal to apply this ACL for\n"
+                },
+                "resourceName": {
+                    "type": "string",
+                    "description": "The name of the resource this ACL entry will be on\n"
+                },
+                "resourcePatternType": {
+                    "type": "string",
+                    "description": "The pattern type of the resource. It determines the strategy how the provided resource name is matched (LITERAL, MATCH, PREFIXED, etc ...) against the actual resource names\n"
+                },
+                "resourceType": {
+                    "type": "string",
+                    "description": "The type of the resource (TOPIC, GROUP, etc...) this ACL shall target\n"
+                }
+            },
+            "requiredInputs": [
+                "clusterApiUrl",
+                "host",
+                "operation",
+                "permissionType",
+                "principal",
+                "resourceName",
+                "resourcePatternType",
+                "resourceType"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Acl resources.\n",
+                "properties": {
+                    "clusterApiUrl": {
+                        "type": "string",
+                        "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                    },
+                    "host": {
+                        "type": "string",
+                        "description": "The host address to use for this ACL\n"
+                    },
+                    "operation": {
+                        "type": "string",
+                        "description": "The operation type that shall be allowed or denied (e.g READ)\n"
+                    },
+                    "permissionType": {
+                        "type": "string",
+                        "description": "The permission type. It determines whether the operation should be ALLOWED or DENIED\n"
+                    },
+                    "principal": {
+                        "type": "string",
+                        "description": "The principal to apply this ACL for\n"
+                    },
+                    "resourceName": {
+                        "type": "string",
+                        "description": "The name of the resource this ACL entry will be on\n"
+                    },
+                    "resourcePatternType": {
+                        "type": "string",
+                        "description": "The pattern type of the resource. It determines the strategy how the provided resource name is matched (LITERAL, MATCH, PREFIXED, etc ...) against the actual resource names\n"
+                    },
+                    "resourceType": {
+                        "type": "string",
+                        "description": "The type of the resource (TOPIC, GROUP, etc...) this ACL shall target\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "redpanda:index/cluster:Cluster": {
+            "description": "Enables the provisioning and management of Redpanda clusters on AWS and GCP. A cluster must always have a network and namespace.\n\n\n## Usage\n\n### On AWS\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst testNamespace = new redpanda.Namespace(\"testNamespace\", {});\nconst config = new pulumi.Config();\nconst region = config.get(\"region\") || \"us-east-1\";\nconst cloudProvider = config.get(\"cloudProvider\") || \"aws\";\nconst testNetwork = new redpanda.Network(\"testNetwork\", {\n    namespaceId: testNamespace.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    cidrBlock: \"10.0.0.0/20\",\n});\nconst zones = config.getObject(\"zones\") || [\n    \"use1-az2\",\n    \"use1-az4\",\n    \"use1-az6\",\n];\nconst throughputTier = config.get(\"throughputTier\") || \"tier-1-aws-v2-arm\";\nconst testCluster = new redpanda.Cluster(\"testCluster\", {\n    namespaceId: testNamespace.id,\n    networkId: testNetwork.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    connectionType: \"public\",\n    throughputTier: throughputTier,\n    zones: zones,\n    allowDeletion: true,\n    tags: {\n        key: \"value\",\n    },\n});\nconst namespaceName = config.get(\"namespaceName\") || \"testname\";\nconst networkName = config.get(\"networkName\") || \"testname\";\nconst clusterName = config.get(\"clusterName\") || \"testname\";\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\ntest_namespace = redpanda.Namespace(\"testNamespace\")\nconfig = pulumi.Config()\nregion = config.get(\"region\")\nif region is None:\n    region = \"us-east-1\"\ncloud_provider = config.get(\"cloudProvider\")\nif cloud_provider is None:\n    cloud_provider = \"aws\"\ntest_network = redpanda.Network(\"testNetwork\",\n    namespace_id=test_namespace.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    cidr_block=\"10.0.0.0/20\")\nzones = config.get_object(\"zones\")\nif zones is None:\n    zones = [\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    ]\nthroughput_tier = config.get(\"throughputTier\")\nif throughput_tier is None:\n    throughput_tier = \"tier-1-aws-v2-arm\"\ntest_cluster = redpanda.Cluster(\"testCluster\",\n    namespace_id=test_namespace.id,\n    network_id=test_network.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    connection_type=\"public\",\n    throughput_tier=throughput_tier,\n    zones=zones,\n    allow_deletion=True,\n    tags={\n        \"key\": \"value\",\n    })\nnamespace_name = config.get(\"namespaceName\")\nif namespace_name is None:\n    namespace_name = \"testname\"\nnetwork_name = config.get(\"networkName\")\nif network_name is None:\n    network_name = \"testname\"\ncluster_name = config.get(\"clusterName\")\nif cluster_name is None:\n    cluster_name = \"testname\"\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var testNamespace = new Redpanda.Namespace(\"testNamespace\");\n\n    var config = new Config();\n    var region = config.Get(\"region\") ?? \"us-east-1\";\n    var cloudProvider = config.Get(\"cloudProvider\") ?? \"aws\";\n    var testNetwork = new Redpanda.Network(\"testNetwork\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        CidrBlock = \"10.0.0.0/20\",\n    });\n\n    var zones = config.GetObject\u003cdynamic\u003e(\"zones\") ?? new[]\n    {\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    };\n    var throughputTier = config.Get(\"throughputTier\") ?? \"tier-1-aws-v2-arm\";\n    var testCluster = new Redpanda.Cluster(\"testCluster\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        NetworkId = testNetwork.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        ConnectionType = \"public\",\n        ThroughputTier = throughputTier,\n        Zones = zones,\n        AllowDeletion = true,\n        Tags = \n        {\n            { \"key\", \"value\" },\n        },\n    });\n\n    var namespaceName = config.Get(\"namespaceName\") ?? \"testname\";\n    var networkName = config.Get(\"networkName\") ?? \"testname\";\n    var clusterName = config.Get(\"clusterName\") ?? \"testname\";\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\ttestNamespace, err := redpanda.NewNamespace(ctx, \"testNamespace\", nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tcfg := config.New(ctx, \"\")\n\t\tregion := \"us-east-1\"\n\t\tif param := cfg.Get(\"region\"); param != \"\" {\n\t\t\tregion = param\n\t\t}\n\t\tcloudProvider := \"aws\"\n\t\tif param := cfg.Get(\"cloudProvider\"); param != \"\" {\n\t\t\tcloudProvider = param\n\t\t}\n\t\ttestNetwork, err := redpanda.NewNetwork(ctx, \"testNetwork\", \u0026redpanda.NetworkArgs{\n\t\t\tNamespaceId:   testNamespace.ID(),\n\t\t\tCloudProvider: pulumi.String(cloudProvider),\n\t\t\tRegion:        pulumi.String(region),\n\t\t\tClusterType:   pulumi.String(\"dedicated\"),\n\t\t\tCidrBlock:     pulumi.String(\"10.0.0.0/20\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tzones := []string{\n\t\t\t\"use1-az2\",\n\t\t\t\"use1-az4\",\n\t\t\t\"use1-az6\",\n\t\t}\n\t\tif param := cfg.GetObject(\"zones\"); param != nil {\n\t\t\tzones = param\n\t\t}\n\t\tthroughputTier := \"tier-1-aws-v2-arm\"\n\t\tif param := cfg.Get(\"throughputTier\"); param != \"\" {\n\t\t\tthroughputTier = param\n\t\t}\n\t\t_, err = redpanda.NewCluster(ctx, \"testCluster\", \u0026redpanda.ClusterArgs{\n\t\t\tNamespaceId:    testNamespace.ID(),\n\t\t\tNetworkId:      testNetwork.ID(),\n\t\t\tCloudProvider:  pulumi.String(cloudProvider),\n\t\t\tRegion:         pulumi.String(region),\n\t\t\tClusterType:    pulumi.String(\"dedicated\"),\n\t\t\tConnectionType: pulumi.String(\"public\"),\n\t\t\tThroughputTier: pulumi.String(throughputTier),\n\t\t\tZones:          pulumi.Any(zones),\n\t\t\tAllowDeletion:  pulumi.Bool(true),\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"key\": pulumi.String(\"value\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tnamespaceName := \"testname\"\n\t\tif param := cfg.Get(\"namespaceName\"); param != \"\" {\n\t\t\tnamespaceName = param\n\t\t}\n\t\tnetworkName := \"testname\"\n\t\tif param := cfg.Get(\"networkName\"); param != \"\" {\n\t\t\tnetworkName = param\n\t\t}\n\t\tclusterName := \"testname\"\n\t\tif param := cfg.Get(\"clusterName\"); param != \"\" {\n\t\t\tclusterName = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.Namespace;\nimport com.pulumi.redpanda.Network;\nimport com.pulumi.redpanda.NetworkArgs;\nimport com.pulumi.redpanda.Cluster;\nimport com.pulumi.redpanda.ClusterArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        var testNamespace = new Namespace(\"testNamespace\");\n\n        final var region = config.get(\"region\").orElse(\"us-east-1\");\n        final var cloudProvider = config.get(\"cloudProvider\").orElse(\"aws\");\n        var testNetwork = new Network(\"testNetwork\", NetworkArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .cidrBlock(\"10.0.0.0/20\")\n            .build());\n\n        final var zones = config.get(\"zones\").orElse(        \n            \"use1-az2\",\n            \"use1-az4\",\n            \"use1-az6\");\n        final var throughputTier = config.get(\"throughputTier\").orElse(\"tier-1-aws-v2-arm\");\n        var testCluster = new Cluster(\"testCluster\", ClusterArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .networkId(testNetwork.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .connectionType(\"public\")\n            .throughputTier(throughputTier)\n            .zones(zones)\n            .allowDeletion(true)\n            .tags(Map.of(\"key\", \"value\"))\n            .build());\n\n        final var namespaceName = config.get(\"namespaceName\").orElse(\"testname\");\n        final var networkName = config.get(\"networkName\").orElse(\"testname\");\n        final var clusterName = config.get(\"clusterName\").orElse(\"testname\");\n    }\n}\n```\n```yaml\nconfiguration:\n  namespaceName:\n    type: string\n    default: testname\n  networkName:\n    type: string\n    default: testname\n  clusterName:\n    type: string\n    default: testname\n  region:\n    type: string\n    default: us-east-1\n  zones:\n    type: dynamic\n    default:\n      - use1-az2\n      - use1-az4\n      - use1-az6\n  cloudProvider:\n    type: string\n    default: aws\n  throughputTier:\n    type: string\n    default: tier-1-aws-v2-arm\nresources:\n  testNamespace:\n    type: redpanda:Namespace\n  testNetwork:\n    type: redpanda:Network\n    properties:\n      namespaceId: ${testNamespace.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      cidrBlock: 10.0.0.0/20\n  testCluster:\n    type: redpanda:Cluster\n    properties:\n      namespaceId: ${testNamespace.id}\n      networkId: ${testNetwork.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      connectionType: public\n      throughputTier: ${throughputTier}\n      zones: ${zones}\n      allowDeletion: true\n      tags:\n        key: value\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n### On GCP\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst testNamespace = new redpanda.Namespace(\"testNamespace\", {});\nconst config = new pulumi.Config();\nconst region = config.get(\"region\") || \"us-central1\";\nconst cloudProvider = config.get(\"cloudProvider\") || \"gcp\";\nconst testNetwork = new redpanda.Network(\"testNetwork\", {\n    namespaceId: testNamespace.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    cidrBlock: \"10.0.0.0/20\",\n});\nconst zones = config.getObject(\"zones\") || [\n    \"us-central1-a\",\n    \"us-central1-b\",\n    \"us-central1-c\",\n];\nconst throughputTier = config.get(\"throughputTier\") || \"tier-1-gcp-um4g\";\nconst testCluster = new redpanda.Cluster(\"testCluster\", {\n    namespaceId: testNamespace.id,\n    networkId: testNetwork.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    connectionType: \"public\",\n    throughputTier: throughputTier,\n    zones: zones,\n    allowDeletion: true,\n    tags: {\n        key: \"value\",\n    },\n});\nconst clusterName = config.get(\"clusterName\") || \"\";\nconst namespaceName = config.get(\"namespaceName\") || \"\";\nconst networkName = config.get(\"networkName\") || \"\";\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\ntest_namespace = redpanda.Namespace(\"testNamespace\")\nconfig = pulumi.Config()\nregion = config.get(\"region\")\nif region is None:\n    region = \"us-central1\"\ncloud_provider = config.get(\"cloudProvider\")\nif cloud_provider is None:\n    cloud_provider = \"gcp\"\ntest_network = redpanda.Network(\"testNetwork\",\n    namespace_id=test_namespace.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    cidr_block=\"10.0.0.0/20\")\nzones = config.get_object(\"zones\")\nif zones is None:\n    zones = [\n        \"us-central1-a\",\n        \"us-central1-b\",\n        \"us-central1-c\",\n    ]\nthroughput_tier = config.get(\"throughputTier\")\nif throughput_tier is None:\n    throughput_tier = \"tier-1-gcp-um4g\"\ntest_cluster = redpanda.Cluster(\"testCluster\",\n    namespace_id=test_namespace.id,\n    network_id=test_network.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    connection_type=\"public\",\n    throughput_tier=throughput_tier,\n    zones=zones,\n    allow_deletion=True,\n    tags={\n        \"key\": \"value\",\n    })\ncluster_name = config.get(\"clusterName\")\nif cluster_name is None:\n    cluster_name = \"\"\nnamespace_name = config.get(\"namespaceName\")\nif namespace_name is None:\n    namespace_name = \"\"\nnetwork_name = config.get(\"networkName\")\nif network_name is None:\n    network_name = \"\"\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var testNamespace = new Redpanda.Namespace(\"testNamespace\");\n\n    var config = new Config();\n    var region = config.Get(\"region\") ?? \"us-central1\";\n    var cloudProvider = config.Get(\"cloudProvider\") ?? \"gcp\";\n    var testNetwork = new Redpanda.Network(\"testNetwork\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        CidrBlock = \"10.0.0.0/20\",\n    });\n\n    var zones = config.GetObject\u003cdynamic\u003e(\"zones\") ?? new[]\n    {\n        \"us-central1-a\",\n        \"us-central1-b\",\n        \"us-central1-c\",\n    };\n    var throughputTier = config.Get(\"throughputTier\") ?? \"tier-1-gcp-um4g\";\n    var testCluster = new Redpanda.Cluster(\"testCluster\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        NetworkId = testNetwork.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        ConnectionType = \"public\",\n        ThroughputTier = throughputTier,\n        Zones = zones,\n        AllowDeletion = true,\n        Tags = \n        {\n            { \"key\", \"value\" },\n        },\n    });\n\n    var clusterName = config.Get(\"clusterName\") ?? \"\";\n    var namespaceName = config.Get(\"namespaceName\") ?? \"\";\n    var networkName = config.Get(\"networkName\") ?? \"\";\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\ttestNamespace, err := redpanda.NewNamespace(ctx, \"testNamespace\", nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tcfg := config.New(ctx, \"\")\n\t\tregion := \"us-central1\"\n\t\tif param := cfg.Get(\"region\"); param != \"\" {\n\t\t\tregion = param\n\t\t}\n\t\tcloudProvider := \"gcp\"\n\t\tif param := cfg.Get(\"cloudProvider\"); param != \"\" {\n\t\t\tcloudProvider = param\n\t\t}\n\t\ttestNetwork, err := redpanda.NewNetwork(ctx, \"testNetwork\", \u0026redpanda.NetworkArgs{\n\t\t\tNamespaceId:   testNamespace.ID(),\n\t\t\tCloudProvider: pulumi.String(cloudProvider),\n\t\t\tRegion:        pulumi.String(region),\n\t\t\tClusterType:   pulumi.String(\"dedicated\"),\n\t\t\tCidrBlock:     pulumi.String(\"10.0.0.0/20\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tzones := []string{\n\t\t\t\"us-central1-a\",\n\t\t\t\"us-central1-b\",\n\t\t\t\"us-central1-c\",\n\t\t}\n\t\tif param := cfg.GetObject(\"zones\"); param != nil {\n\t\t\tzones = param\n\t\t}\n\t\tthroughputTier := \"tier-1-gcp-um4g\"\n\t\tif param := cfg.Get(\"throughputTier\"); param != \"\" {\n\t\t\tthroughputTier = param\n\t\t}\n\t\t_, err = redpanda.NewCluster(ctx, \"testCluster\", \u0026redpanda.ClusterArgs{\n\t\t\tNamespaceId:    testNamespace.ID(),\n\t\t\tNetworkId:      testNetwork.ID(),\n\t\t\tCloudProvider:  pulumi.String(cloudProvider),\n\t\t\tRegion:         pulumi.String(region),\n\t\t\tClusterType:    pulumi.String(\"dedicated\"),\n\t\t\tConnectionType: pulumi.String(\"public\"),\n\t\t\tThroughputTier: pulumi.String(throughputTier),\n\t\t\tZones:          pulumi.Any(zones),\n\t\t\tAllowDeletion:  pulumi.Bool(true),\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"key\": pulumi.String(\"value\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tclusterName := \"\"\n\t\tif param := cfg.Get(\"clusterName\"); param != \"\" {\n\t\t\tclusterName = param\n\t\t}\n\t\tnamespaceName := \"\"\n\t\tif param := cfg.Get(\"namespaceName\"); param != \"\" {\n\t\t\tnamespaceName = param\n\t\t}\n\t\tnetworkName := \"\"\n\t\tif param := cfg.Get(\"networkName\"); param != \"\" {\n\t\t\tnetworkName = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.Namespace;\nimport com.pulumi.redpanda.Network;\nimport com.pulumi.redpanda.NetworkArgs;\nimport com.pulumi.redpanda.Cluster;\nimport com.pulumi.redpanda.ClusterArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        var testNamespace = new Namespace(\"testNamespace\");\n\n        final var region = config.get(\"region\").orElse(\"us-central1\");\n        final var cloudProvider = config.get(\"cloudProvider\").orElse(\"gcp\");\n        var testNetwork = new Network(\"testNetwork\", NetworkArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .cidrBlock(\"10.0.0.0/20\")\n            .build());\n\n        final var zones = config.get(\"zones\").orElse(        \n            \"us-central1-a\",\n            \"us-central1-b\",\n            \"us-central1-c\");\n        final var throughputTier = config.get(\"throughputTier\").orElse(\"tier-1-gcp-um4g\");\n        var testCluster = new Cluster(\"testCluster\", ClusterArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .networkId(testNetwork.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .connectionType(\"public\")\n            .throughputTier(throughputTier)\n            .zones(zones)\n            .allowDeletion(true)\n            .tags(Map.of(\"key\", \"value\"))\n            .build());\n\n        final var clusterName = config.get(\"clusterName\").orElse(\"\");\n        final var namespaceName = config.get(\"namespaceName\").orElse(\"\");\n        final var networkName = config.get(\"networkName\").orElse(\"\");\n    }\n}\n```\n```yaml\nconfiguration:\n  clusterName:\n    type: string\n    default:\n  namespaceName:\n    type: string\n    default:\n  networkName:\n    type: string\n    default:\n  region:\n    type: string\n    default: us-central1\n  zones:\n    type: dynamic\n    default:\n      - us-central1-a\n      - us-central1-b\n      - us-central1-c\n  cloudProvider:\n    type: string\n    default: gcp\n  throughputTier:\n    type: string\n    default: tier-1-gcp-um4g\nresources:\n  testNamespace:\n    type: redpanda:Namespace\n  testNetwork:\n    type: redpanda:Network\n    properties:\n      namespaceId: ${testNamespace.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      cidrBlock: 10.0.0.0/20\n  testCluster:\n    type: redpanda:Cluster\n    properties:\n      namespaceId: ${testNamespace.id}\n      networkId: ${testNetwork.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      connectionType: public\n      throughputTier: ${throughputTier}\n      zones: ${zones}\n      allowDeletion: true\n      tags:\n        key: value\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Limitations\n\nWe are not currently able to support the provisioning of \"BYOC\" clusters using this provider. A workaround is available\n\n * First use [RPK](https://docs.redpanda.com/current/deploy/deployment-option/cloud/create-byoc-cluster-aws/) to provision the cluster\n * Then use the provider's redpanda.Cluster data source to reference the cluster for use in other resources.\n\n### Example Usage of a data source BYOC to manage users and ACLs\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst config = new pulumi.Config();\nconst clusterId = config.get(\"clusterId\") || \"\";\nconst testCluster = redpanda.getCluster({\n    id: clusterId,\n});\nconst userPw = config.get(\"userPw\") || \"password\";\nconst mechanism = config.get(\"mechanism\") || \"scram-sha-256\";\nconst testUser = new redpanda.User(\"testUser\", {\n    password: userPw,\n    mechanism: mechanism,\n    clusterApiUrl: testCluster.then(testCluster =\u003e testCluster.clusterApiUrl),\n});\nconst testAcl = new redpanda.Acl(\"testAcl\", {\n    resourceType: \"CLUSTER\",\n    resourceName: \"kafka-cluster\",\n    resourcePatternType: \"LITERAL\",\n    principal: pulumi.interpolate`User:${testUser.name}`,\n    host: \"*\",\n    operation: \"ALTER\",\n    permissionType: \"ALLOW\",\n    clusterApiUrl: testCluster.then(testCluster =\u003e testCluster.clusterApiUrl),\n});\nconst userName = config.get(\"userName\") || \"test-username\";\nconst topicName = config.get(\"topicName\") || \"test-topic\";\nconst partitionCount = config.getNumber(\"partitionCount\") || 3;\nconst replicationFactor = config.getNumber(\"replicationFactor\") || 3;\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\nconfig = pulumi.Config()\ncluster_id = config.get(\"clusterId\")\nif cluster_id is None:\n    cluster_id = \"\"\ntest_cluster = redpanda.get_cluster(id=cluster_id)\nuser_pw = config.get(\"userPw\")\nif user_pw is None:\n    user_pw = \"password\"\nmechanism = config.get(\"mechanism\")\nif mechanism is None:\n    mechanism = \"scram-sha-256\"\ntest_user = redpanda.User(\"testUser\",\n    password=user_pw,\n    mechanism=mechanism,\n    cluster_api_url=test_cluster.cluster_api_url)\ntest_acl = redpanda.Acl(\"testAcl\",\n    resource_type=\"CLUSTER\",\n    resource_name_=\"kafka-cluster\",\n    resource_pattern_type=\"LITERAL\",\n    principal=test_user.name.apply(lambda name: f\"User:{name}\"),\n    host=\"*\",\n    operation=\"ALTER\",\n    permission_type=\"ALLOW\",\n    cluster_api_url=test_cluster.cluster_api_url)\nuser_name = config.get(\"userName\")\nif user_name is None:\n    user_name = \"test-username\"\ntopic_name = config.get(\"topicName\")\nif topic_name is None:\n    topic_name = \"test-topic\"\npartition_count = config.get_float(\"partitionCount\")\nif partition_count is None:\n    partition_count = 3\nreplication_factor = config.get_float(\"replicationFactor\")\nif replication_factor is None:\n    replication_factor = 3\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var config = new Config();\n    var clusterId = config.Get(\"clusterId\") ?? \"\";\n    var testCluster = Redpanda.GetCluster.Invoke(new()\n    {\n        Id = clusterId,\n    });\n\n    var userPw = config.Get(\"userPw\") ?? \"password\";\n    var mechanism = config.Get(\"mechanism\") ?? \"scram-sha-256\";\n    var testUser = new Redpanda.User(\"testUser\", new()\n    {\n        Password = userPw,\n        Mechanism = mechanism,\n        ClusterApiUrl = testCluster.Apply(getClusterResult =\u003e getClusterResult.ClusterApiUrl),\n    });\n\n    var testAcl = new Redpanda.Acl(\"testAcl\", new()\n    {\n        ResourceType = \"CLUSTER\",\n        ResourceName = \"kafka-cluster\",\n        ResourcePatternType = \"LITERAL\",\n        Principal = testUser.Name.Apply(name =\u003e $\"User:{name}\"),\n        Host = \"*\",\n        Operation = \"ALTER\",\n        PermissionType = \"ALLOW\",\n        ClusterApiUrl = testCluster.Apply(getClusterResult =\u003e getClusterResult.ClusterApiUrl),\n    });\n\n    var userName = config.Get(\"userName\") ?? \"test-username\";\n    var topicName = config.Get(\"topicName\") ?? \"test-topic\";\n    var partitionCount = config.GetDouble(\"partitionCount\") ?? 3;\n    var replicationFactor = config.GetDouble(\"replicationFactor\") ?? 3;\n});\n```\n```go\npackage main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\tcfg := config.New(ctx, \"\")\n\t\tclusterId := \"\"\n\t\tif param := cfg.Get(\"clusterId\"); param != \"\" {\n\t\t\tclusterId = param\n\t\t}\n\t\ttestCluster, err := redpanda.LookupCluster(ctx, \u0026redpanda.LookupClusterArgs{\n\t\t\tId: clusterId,\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserPw := \"password\"\n\t\tif param := cfg.Get(\"userPw\"); param != \"\" {\n\t\t\tuserPw = param\n\t\t}\n\t\tmechanism := \"scram-sha-256\"\n\t\tif param := cfg.Get(\"mechanism\"); param != \"\" {\n\t\t\tmechanism = param\n\t\t}\n\t\ttestUser, err := redpanda.NewUser(ctx, \"testUser\", \u0026redpanda.UserArgs{\n\t\t\tPassword:      pulumi.String(userPw),\n\t\t\tMechanism:     pulumi.String(mechanism),\n\t\t\tClusterApiUrl: pulumi.String(testCluster.ClusterApiUrl),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = redpanda.NewAcl(ctx, \"testAcl\", \u0026redpanda.AclArgs{\n\t\t\tResourceType:        pulumi.String(\"CLUSTER\"),\n\t\t\tResourceName:        pulumi.String(\"kafka-cluster\"),\n\t\t\tResourcePatternType: pulumi.String(\"LITERAL\"),\n\t\t\tPrincipal: testUser.Name.ApplyT(func(name string) (string, error) {\n\t\t\t\treturn fmt.Sprintf(\"User:%v\", name), nil\n\t\t\t}).(pulumi.StringOutput),\n\t\t\tHost:           pulumi.String(\"*\"),\n\t\t\tOperation:      pulumi.String(\"ALTER\"),\n\t\t\tPermissionType: pulumi.String(\"ALLOW\"),\n\t\t\tClusterApiUrl:  pulumi.String(testCluster.ClusterApiUrl),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserName := \"test-username\"\n\t\tif param := cfg.Get(\"userName\"); param != \"\" {\n\t\t\tuserName = param\n\t\t}\n\t\ttopicName := \"test-topic\"\n\t\tif param := cfg.Get(\"topicName\"); param != \"\" {\n\t\t\ttopicName = param\n\t\t}\n\t\tpartitionCount := float64(3)\n\t\tif param := cfg.GetFloat64(\"partitionCount\"); param != 0 {\n\t\t\tpartitionCount = param\n\t\t}\n\t\treplicationFactor := float64(3)\n\t\tif param := cfg.GetFloat64(\"replicationFactor\"); param != 0 {\n\t\t\treplicationFactor = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.RedpandaFunctions;\nimport com.pulumi.redpanda.inputs.GetClusterArgs;\nimport com.pulumi.redpanda.User;\nimport com.pulumi.redpanda.UserArgs;\nimport com.pulumi.redpanda.Acl;\nimport com.pulumi.redpanda.AclArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        final var clusterId = config.get(\"clusterId\").orElse(\"\");\n        final var testCluster = RedpandaFunctions.getCluster(GetClusterArgs.builder()\n            .id(clusterId)\n            .build());\n\n        final var userPw = config.get(\"userPw\").orElse(\"password\");\n        final var mechanism = config.get(\"mechanism\").orElse(\"scram-sha-256\");\n        var testUser = new User(\"testUser\", UserArgs.builder()        \n            .password(userPw)\n            .mechanism(mechanism)\n            .clusterApiUrl(testCluster.applyValue(getClusterResult -\u003e getClusterResult.clusterApiUrl()))\n            .build());\n\n        var testAcl = new Acl(\"testAcl\", AclArgs.builder()        \n            .resourceType(\"CLUSTER\")\n            .resourceName(\"kafka-cluster\")\n            .resourcePatternType(\"LITERAL\")\n            .principal(testUser.name().applyValue(name -\u003e String.format(\"User:%s\", name)))\n            .host(\"*\")\n            .operation(\"ALTER\")\n            .permissionType(\"ALLOW\")\n            .clusterApiUrl(testCluster.applyValue(getClusterResult -\u003e getClusterResult.clusterApiUrl()))\n            .build());\n\n        final var userName = config.get(\"userName\").orElse(\"test-username\");\n        final var topicName = config.get(\"topicName\").orElse(\"test-topic\");\n        final var partitionCount = config.get(\"partitionCount\").orElse(3);\n        final var replicationFactor = config.get(\"replicationFactor\").orElse(3);\n    }\n}\n```\n```yaml\nconfiguration:\n  clusterId:\n    type: string\n    default:\n  userName:\n    type: string\n    default: test-username\n  userPw:\n    type: string\n    default: password\n  mechanism:\n    type: string\n    default: scram-sha-256\n  topicName:\n    type: string\n    default: test-topic\n  partitionCount:\n    type: number\n    default: 3\n  replicationFactor:\n    type: number\n    default: 3\nresources:\n  testUser:\n    type: redpanda:User\n    properties:\n      password: ${userPw}\n      mechanism: ${mechanism}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n  testAcl:\n    type: redpanda:Acl\n    properties:\n      resourceType: CLUSTER\n      resourceName: kafka-cluster\n      resourcePatternType: LITERAL\n      principal: User:${testUser.name}\n      host: '*'\n      operation: ALTER\n      permissionType: ALLOW\n      clusterApiUrl: ${testCluster.clusterApiUrl}\nvariables:\n  testCluster:\n    fn::invoke:\n      Function: redpanda:getCluster\n      Arguments:\n        id: ${clusterId}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\n```sh\n$ pulumi import redpanda:index/cluster:Cluster example clusterId\n```\n\n",
+            "properties": {
+                "allowDeletion": {
+                    "type": "boolean",
+                    "description": "allows deletion of the cluster. defaults to true. should probably be set to false for production use\n"
+                },
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "Must be one of aws or gcp\n"
+                },
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The URL of the cluster API\n"
+                },
+                "clusterType": {
+                    "type": "string",
+                    "description": "Type of the cluster\n"
+                },
+                "connectionType": {
+                    "type": "string",
+                    "description": "Connection type of the cluster\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the cluster\n"
+                },
+                "namespaceId": {
+                    "type": "string",
+                    "description": "The id of the namespace in which to create the cluster\n"
+                },
+                "networkId": {
+                    "type": "string",
+                    "description": "The id of the network in which to create the cluster\n"
+                },
+                "redpandaVersion": {
+                    "type": "string",
+                    "description": "Version of Redpanda to deploy\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Cloud provider specific region of the cluster\n"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Tags to apply to the cluster\n"
+                },
+                "throughputTier": {
+                    "type": "string",
+                    "description": "Throughput tier of the cluster\n"
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Cloud provider specific zones of the cluster\n"
+                }
+            },
+            "required": [
+                "clusterApiUrl",
+                "clusterType",
+                "connectionType",
+                "name",
+                "namespaceId",
+                "networkId",
+                "throughputTier"
+            ],
+            "inputProperties": {
+                "allowDeletion": {
+                    "type": "boolean",
+                    "description": "allows deletion of the cluster. defaults to true. should probably be set to false for production use\n"
+                },
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "Must be one of aws or gcp\n"
+                },
+                "clusterType": {
+                    "type": "string",
+                    "description": "Type of the cluster\n"
+                },
+                "connectionType": {
+                    "type": "string",
+                    "description": "Connection type of the cluster\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the cluster\n"
+                },
+                "namespaceId": {
+                    "type": "string",
+                    "description": "The id of the namespace in which to create the cluster\n"
+                },
+                "networkId": {
+                    "type": "string",
+                    "description": "The id of the network in which to create the cluster\n"
+                },
+                "redpandaVersion": {
+                    "type": "string",
+                    "description": "Version of Redpanda to deploy\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Cloud provider specific region of the cluster\n"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Tags to apply to the cluster\n"
+                },
+                "throughputTier": {
+                    "type": "string",
+                    "description": "Throughput tier of the cluster\n"
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Cloud provider specific zones of the cluster\n"
+                }
+            },
+            "requiredInputs": [
+                "clusterType",
+                "connectionType",
+                "namespaceId",
+                "networkId",
+                "throughputTier"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Cluster resources.\n",
+                "properties": {
+                    "allowDeletion": {
+                        "type": "boolean",
+                        "description": "allows deletion of the cluster. defaults to true. should probably be set to false for production use\n"
+                    },
+                    "cloudProvider": {
+                        "type": "string",
+                        "description": "Must be one of aws or gcp\n"
+                    },
+                    "clusterApiUrl": {
+                        "type": "string",
+                        "description": "The URL of the cluster API\n"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "description": "Type of the cluster\n"
+                    },
+                    "connectionType": {
+                        "type": "string",
+                        "description": "Connection type of the cluster\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the cluster\n"
+                    },
+                    "namespaceId": {
+                        "type": "string",
+                        "description": "The id of the namespace in which to create the cluster\n"
+                    },
+                    "networkId": {
+                        "type": "string",
+                        "description": "The id of the network in which to create the cluster\n"
+                    },
+                    "redpandaVersion": {
+                        "type": "string",
+                        "description": "Version of Redpanda to deploy\n"
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "Cloud provider specific region of the cluster\n"
+                    },
+                    "tags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Tags to apply to the cluster\n"
+                    },
+                    "throughputTier": {
+                        "type": "string",
+                        "description": "Throughput tier of the cluster\n"
+                    },
+                    "zones": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Cloud provider specific zones of the cluster\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "redpanda:index/namespace:Namespace": {
+            "description": "A Redpanda Cloud namespace\n",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the namespace. Changing the name of a namespace will result in a new namespace being created and the old one being destroyed\n"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "inputProperties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the namespace. Changing the name of a namespace will result in a new namespace being created and the old one being destroyed\n"
+                }
+            },
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Namespace resources.\n",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the namespace. Changing the name of a namespace will result in a new namespace being created and the old one being destroyed\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "redpanda:index/network:Network": {
+            "description": "Creates a network in the Redpanda Cloud.\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst testNamespace = new redpanda.Namespace(\"testNamespace\", {});\nconst config = new pulumi.Config();\nconst region = config.get(\"region\") || \"us-east-1\";\nconst cloudProvider = config.get(\"cloudProvider\") || \"aws\";\nconst testNetwork = new redpanda.Network(\"testNetwork\", {\n    namespaceId: testNamespace.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    cidrBlock: \"10.0.0.0/20\",\n});\nconst namespaceName = config.get(\"namespaceName\") || \"testname\";\nconst networkName = config.get(\"networkName\") || \"testname\";\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\ntest_namespace = redpanda.Namespace(\"testNamespace\")\nconfig = pulumi.Config()\nregion = config.get(\"region\")\nif region is None:\n    region = \"us-east-1\"\ncloud_provider = config.get(\"cloudProvider\")\nif cloud_provider is None:\n    cloud_provider = \"aws\"\ntest_network = redpanda.Network(\"testNetwork\",\n    namespace_id=test_namespace.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    cidr_block=\"10.0.0.0/20\")\nnamespace_name = config.get(\"namespaceName\")\nif namespace_name is None:\n    namespace_name = \"testname\"\nnetwork_name = config.get(\"networkName\")\nif network_name is None:\n    network_name = \"testname\"\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var testNamespace = new Redpanda.Namespace(\"testNamespace\");\n\n    var config = new Config();\n    var region = config.Get(\"region\") ?? \"us-east-1\";\n    var cloudProvider = config.Get(\"cloudProvider\") ?? \"aws\";\n    var testNetwork = new Redpanda.Network(\"testNetwork\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        CidrBlock = \"10.0.0.0/20\",\n    });\n\n    var namespaceName = config.Get(\"namespaceName\") ?? \"testname\";\n    var networkName = config.Get(\"networkName\") ?? \"testname\";\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\ttestNamespace, err := redpanda.NewNamespace(ctx, \"testNamespace\", nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tcfg := config.New(ctx, \"\")\n\t\tregion := \"us-east-1\"\n\t\tif param := cfg.Get(\"region\"); param != \"\" {\n\t\t\tregion = param\n\t\t}\n\t\tcloudProvider := \"aws\"\n\t\tif param := cfg.Get(\"cloudProvider\"); param != \"\" {\n\t\t\tcloudProvider = param\n\t\t}\n\t\t_, err = redpanda.NewNetwork(ctx, \"testNetwork\", \u0026redpanda.NetworkArgs{\n\t\t\tNamespaceId:   testNamespace.ID(),\n\t\t\tCloudProvider: pulumi.String(cloudProvider),\n\t\t\tRegion:        pulumi.String(region),\n\t\t\tClusterType:   pulumi.String(\"dedicated\"),\n\t\t\tCidrBlock:     pulumi.String(\"10.0.0.0/20\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tnamespaceName := \"testname\"\n\t\tif param := cfg.Get(\"namespaceName\"); param != \"\" {\n\t\t\tnamespaceName = param\n\t\t}\n\t\tnetworkName := \"testname\"\n\t\tif param := cfg.Get(\"networkName\"); param != \"\" {\n\t\t\tnetworkName = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.Namespace;\nimport com.pulumi.redpanda.Network;\nimport com.pulumi.redpanda.NetworkArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        var testNamespace = new Namespace(\"testNamespace\");\n\n        final var region = config.get(\"region\").orElse(\"us-east-1\");\n        final var cloudProvider = config.get(\"cloudProvider\").orElse(\"aws\");\n        var testNetwork = new Network(\"testNetwork\", NetworkArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .cidrBlock(\"10.0.0.0/20\")\n            .build());\n\n        final var namespaceName = config.get(\"namespaceName\").orElse(\"testname\");\n        final var networkName = config.get(\"networkName\").orElse(\"testname\");\n    }\n}\n```\n```yaml\nconfiguration:\n  namespaceName:\n    type: string\n    default: testname\n  networkName:\n    type: string\n    default: testname\n  region:\n    type: string\n    default: us-east-1\n  cloudProvider:\n    type: string\n    default: aws\nresources:\n  testNamespace:\n    type: redpanda:Namespace\n  testNetwork:\n    type: redpanda:Network\n    properties:\n      namespaceId: ${testNamespace.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      cidrBlock: 10.0.0.0/20\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Import\n\n```sh\n$ pulumi import redpanda:index/network:Network example networkId\n```\n\n",
+            "properties": {
+                "cidrBlock": {
+                    "type": "string",
+                    "description": "The cidr_block to create the network in\n"
+                },
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "The cloud provider to create the network in. Can also be set at the provider level\n"
+                },
+                "clusterType": {
+                    "type": "string",
+                    "description": "The type of cluster this network is associated with, can be one of dedicated or cloud\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the network\n"
+                },
+                "namespaceId": {
+                    "type": "string",
+                    "description": "The id of the namespace in which to create the network\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "The region to create the network in. Can also be set at the provider level\n"
+                }
+            },
+            "required": [
+                "cidrBlock",
+                "clusterType",
+                "name",
+                "namespaceId"
+            ],
+            "inputProperties": {
+                "cidrBlock": {
+                    "type": "string",
+                    "description": "The cidr_block to create the network in\n"
+                },
+                "cloudProvider": {
+                    "type": "string",
+                    "description": "The cloud provider to create the network in. Can also be set at the provider level\n"
+                },
+                "clusterType": {
+                    "type": "string",
+                    "description": "The type of cluster this network is associated with, can be one of dedicated or cloud\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the network\n"
+                },
+                "namespaceId": {
+                    "type": "string",
+                    "description": "The id of the namespace in which to create the network\n"
+                },
+                "region": {
+                    "type": "string",
+                    "description": "The region to create the network in. Can also be set at the provider level\n"
+                }
+            },
+            "requiredInputs": [
+                "cidrBlock",
+                "clusterType",
+                "namespaceId"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Network resources.\n",
+                "properties": {
+                    "cidrBlock": {
+                        "type": "string",
+                        "description": "The cidr_block to create the network in\n"
+                    },
+                    "cloudProvider": {
+                        "type": "string",
+                        "description": "The cloud provider to create the network in. Can also be set at the provider level\n"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "description": "The type of cluster this network is associated with, can be one of dedicated or cloud\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the network\n"
+                    },
+                    "namespaceId": {
+                        "type": "string",
+                        "description": "The id of the namespace in which to create the network\n"
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "The region to create the network in. Can also be set at the provider level\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "redpanda:index/topic:Topic": {
+            "description": "Topic represents a Kafka topic configuration\n\nCreates a topic in a Redpanda Cluster\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst testNamespace = new redpanda.Namespace(\"testNamespace\", {});\nconst config = new pulumi.Config();\nconst region = config.get(\"region\") || \"us-east-1\";\nconst cloudProvider = config.get(\"cloudProvider\") || \"aws\";\nconst testNetwork = new redpanda.Network(\"testNetwork\", {\n    namespaceId: testNamespace.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    cidrBlock: \"10.0.0.0/20\",\n});\nconst zones = config.getObject(\"zones\") || [\n    \"use1-az2\",\n    \"use1-az4\",\n    \"use1-az6\",\n];\nconst throughputTier = config.get(\"throughputTier\") || \"tier-1-aws-v2-arm\";\nconst testCluster = new redpanda.Cluster(\"testCluster\", {\n    namespaceId: testNamespace.id,\n    networkId: testNetwork.id,\n    cloudProvider: cloudProvider,\n    region: region,\n    clusterType: \"dedicated\",\n    connectionType: \"public\",\n    throughputTier: throughputTier,\n    zones: zones,\n    allowDeletion: true,\n    tags: {\n        key: \"value\",\n    },\n});\nconst userPw = config.get(\"userPw\") || \"password\";\nconst mechanism = config.get(\"mechanism\") || \"scram-sha-256\";\nconst testUser = new redpanda.User(\"testUser\", {\n    password: userPw,\n    mechanism: mechanism,\n    clusterApiUrl: testCluster.clusterApiUrl,\n});\nconst partitionCount = config.getNumber(\"partitionCount\") || 3;\nconst replicationFactor = config.getNumber(\"replicationFactor\") || 3;\nconst testTopic = new redpanda.Topic(\"testTopic\", {\n    partitionCount: partitionCount,\n    replicationFactor: replicationFactor,\n    clusterApiUrl: testCluster.clusterApiUrl,\n    allowDeletion: true,\n});\nconst testAcl = new redpanda.Acl(\"testAcl\", {\n    resourceType: \"TOPIC\",\n    resourceName: testTopic.name,\n    resourcePatternType: \"LITERAL\",\n    principal: pulumi.interpolate`User:${testUser.name}`,\n    host: \"*\",\n    operation: \"READ\",\n    permissionType: \"ALLOW\",\n    clusterApiUrl: testCluster.clusterApiUrl,\n});\nconst namespaceName = config.get(\"namespaceName\") || \"testname\";\nconst networkName = config.get(\"networkName\") || \"testname\";\nconst clusterName = config.get(\"clusterName\") || \"testname\";\nconst userName = config.get(\"userName\") || \"test-username\";\nconst topicName = config.get(\"topicName\") || \"test-topic\";\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\ntest_namespace = redpanda.Namespace(\"testNamespace\")\nconfig = pulumi.Config()\nregion = config.get(\"region\")\nif region is None:\n    region = \"us-east-1\"\ncloud_provider = config.get(\"cloudProvider\")\nif cloud_provider is None:\n    cloud_provider = \"aws\"\ntest_network = redpanda.Network(\"testNetwork\",\n    namespace_id=test_namespace.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    cidr_block=\"10.0.0.0/20\")\nzones = config.get_object(\"zones\")\nif zones is None:\n    zones = [\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    ]\nthroughput_tier = config.get(\"throughputTier\")\nif throughput_tier is None:\n    throughput_tier = \"tier-1-aws-v2-arm\"\ntest_cluster = redpanda.Cluster(\"testCluster\",\n    namespace_id=test_namespace.id,\n    network_id=test_network.id,\n    cloud_provider=cloud_provider,\n    region=region,\n    cluster_type=\"dedicated\",\n    connection_type=\"public\",\n    throughput_tier=throughput_tier,\n    zones=zones,\n    allow_deletion=True,\n    tags={\n        \"key\": \"value\",\n    })\nuser_pw = config.get(\"userPw\")\nif user_pw is None:\n    user_pw = \"password\"\nmechanism = config.get(\"mechanism\")\nif mechanism is None:\n    mechanism = \"scram-sha-256\"\ntest_user = redpanda.User(\"testUser\",\n    password=user_pw,\n    mechanism=mechanism,\n    cluster_api_url=test_cluster.cluster_api_url)\npartition_count = config.get_float(\"partitionCount\")\nif partition_count is None:\n    partition_count = 3\nreplication_factor = config.get_float(\"replicationFactor\")\nif replication_factor is None:\n    replication_factor = 3\ntest_topic = redpanda.Topic(\"testTopic\",\n    partition_count=partition_count,\n    replication_factor=replication_factor,\n    cluster_api_url=test_cluster.cluster_api_url,\n    allow_deletion=True)\ntest_acl = redpanda.Acl(\"testAcl\",\n    resource_type=\"TOPIC\",\n    resource_name_=test_topic.name,\n    resource_pattern_type=\"LITERAL\",\n    principal=test_user.name.apply(lambda name: f\"User:{name}\"),\n    host=\"*\",\n    operation=\"READ\",\n    permission_type=\"ALLOW\",\n    cluster_api_url=test_cluster.cluster_api_url)\nnamespace_name = config.get(\"namespaceName\")\nif namespace_name is None:\n    namespace_name = \"testname\"\nnetwork_name = config.get(\"networkName\")\nif network_name is None:\n    network_name = \"testname\"\ncluster_name = config.get(\"clusterName\")\nif cluster_name is None:\n    cluster_name = \"testname\"\nuser_name = config.get(\"userName\")\nif user_name is None:\n    user_name = \"test-username\"\ntopic_name = config.get(\"topicName\")\nif topic_name is None:\n    topic_name = \"test-topic\"\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var testNamespace = new Redpanda.Namespace(\"testNamespace\");\n\n    var config = new Config();\n    var region = config.Get(\"region\") ?? \"us-east-1\";\n    var cloudProvider = config.Get(\"cloudProvider\") ?? \"aws\";\n    var testNetwork = new Redpanda.Network(\"testNetwork\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        CidrBlock = \"10.0.0.0/20\",\n    });\n\n    var zones = config.GetObject\u003cdynamic\u003e(\"zones\") ?? new[]\n    {\n        \"use1-az2\",\n        \"use1-az4\",\n        \"use1-az6\",\n    };\n    var throughputTier = config.Get(\"throughputTier\") ?? \"tier-1-aws-v2-arm\";\n    var testCluster = new Redpanda.Cluster(\"testCluster\", new()\n    {\n        NamespaceId = testNamespace.Id,\n        NetworkId = testNetwork.Id,\n        CloudProvider = cloudProvider,\n        Region = region,\n        ClusterType = \"dedicated\",\n        ConnectionType = \"public\",\n        ThroughputTier = throughputTier,\n        Zones = zones,\n        AllowDeletion = true,\n        Tags = \n        {\n            { \"key\", \"value\" },\n        },\n    });\n\n    var userPw = config.Get(\"userPw\") ?? \"password\";\n    var mechanism = config.Get(\"mechanism\") ?? \"scram-sha-256\";\n    var testUser = new Redpanda.User(\"testUser\", new()\n    {\n        Password = userPw,\n        Mechanism = mechanism,\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n    });\n\n    var partitionCount = config.GetDouble(\"partitionCount\") ?? 3;\n    var replicationFactor = config.GetDouble(\"replicationFactor\") ?? 3;\n    var testTopic = new Redpanda.Topic(\"testTopic\", new()\n    {\n        PartitionCount = partitionCount,\n        ReplicationFactor = replicationFactor,\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n        AllowDeletion = true,\n    });\n\n    var testAcl = new Redpanda.Acl(\"testAcl\", new()\n    {\n        ResourceType = \"TOPIC\",\n        ResourceName = testTopic.Name,\n        ResourcePatternType = \"LITERAL\",\n        Principal = testUser.Name.Apply(name =\u003e $\"User:{name}\"),\n        Host = \"*\",\n        Operation = \"READ\",\n        PermissionType = \"ALLOW\",\n        ClusterApiUrl = testCluster.ClusterApiUrl,\n    });\n\n    var namespaceName = config.Get(\"namespaceName\") ?? \"testname\";\n    var networkName = config.Get(\"networkName\") ?? \"testname\";\n    var clusterName = config.Get(\"clusterName\") ?? \"testname\";\n    var userName = config.Get(\"userName\") ?? \"test-username\";\n    var topicName = config.Get(\"topicName\") ?? \"test-topic\";\n});\n```\n```go\npackage main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\ttestNamespace, err := redpanda.NewNamespace(ctx, \"testNamespace\", nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tcfg := config.New(ctx, \"\")\n\t\tregion := \"us-east-1\"\n\t\tif param := cfg.Get(\"region\"); param != \"\" {\n\t\t\tregion = param\n\t\t}\n\t\tcloudProvider := \"aws\"\n\t\tif param := cfg.Get(\"cloudProvider\"); param != \"\" {\n\t\t\tcloudProvider = param\n\t\t}\n\t\ttestNetwork, err := redpanda.NewNetwork(ctx, \"testNetwork\", \u0026redpanda.NetworkArgs{\n\t\t\tNamespaceId:   testNamespace.ID(),\n\t\t\tCloudProvider: pulumi.String(cloudProvider),\n\t\t\tRegion:        pulumi.String(region),\n\t\t\tClusterType:   pulumi.String(\"dedicated\"),\n\t\t\tCidrBlock:     pulumi.String(\"10.0.0.0/20\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tzones := []string{\n\t\t\t\"use1-az2\",\n\t\t\t\"use1-az4\",\n\t\t\t\"use1-az6\",\n\t\t}\n\t\tif param := cfg.GetObject(\"zones\"); param != nil {\n\t\t\tzones = param\n\t\t}\n\t\tthroughputTier := \"tier-1-aws-v2-arm\"\n\t\tif param := cfg.Get(\"throughputTier\"); param != \"\" {\n\t\t\tthroughputTier = param\n\t\t}\n\t\ttestCluster, err := redpanda.NewCluster(ctx, \"testCluster\", \u0026redpanda.ClusterArgs{\n\t\t\tNamespaceId:    testNamespace.ID(),\n\t\t\tNetworkId:      testNetwork.ID(),\n\t\t\tCloudProvider:  pulumi.String(cloudProvider),\n\t\t\tRegion:         pulumi.String(region),\n\t\t\tClusterType:    pulumi.String(\"dedicated\"),\n\t\t\tConnectionType: pulumi.String(\"public\"),\n\t\t\tThroughputTier: pulumi.String(throughputTier),\n\t\t\tZones:          pulumi.Any(zones),\n\t\t\tAllowDeletion:  pulumi.Bool(true),\n\t\t\tTags: pulumi.StringMap{\n\t\t\t\t\"key\": pulumi.String(\"value\"),\n\t\t\t},\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserPw := \"password\"\n\t\tif param := cfg.Get(\"userPw\"); param != \"\" {\n\t\t\tuserPw = param\n\t\t}\n\t\tmechanism := \"scram-sha-256\"\n\t\tif param := cfg.Get(\"mechanism\"); param != \"\" {\n\t\t\tmechanism = param\n\t\t}\n\t\ttestUser, err := redpanda.NewUser(ctx, \"testUser\", \u0026redpanda.UserArgs{\n\t\t\tPassword:      pulumi.String(userPw),\n\t\t\tMechanism:     pulumi.String(mechanism),\n\t\t\tClusterApiUrl: testCluster.ClusterApiUrl,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tpartitionCount := float64(3)\n\t\tif param := cfg.GetFloat64(\"partitionCount\"); param != 0 {\n\t\t\tpartitionCount = param\n\t\t}\n\t\treplicationFactor := float64(3)\n\t\tif param := cfg.GetFloat64(\"replicationFactor\"); param != 0 {\n\t\t\treplicationFactor = param\n\t\t}\n\t\ttestTopic, err := redpanda.NewTopic(ctx, \"testTopic\", \u0026redpanda.TopicArgs{\n\t\t\tPartitionCount:    pulumi.Float64(partitionCount),\n\t\t\tReplicationFactor: pulumi.Float64(replicationFactor),\n\t\t\tClusterApiUrl:     testCluster.ClusterApiUrl,\n\t\t\tAllowDeletion:     pulumi.Bool(true),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = redpanda.NewAcl(ctx, \"testAcl\", \u0026redpanda.AclArgs{\n\t\t\tResourceType:        pulumi.String(\"TOPIC\"),\n\t\t\tResourceName:        testTopic.Name,\n\t\t\tResourcePatternType: pulumi.String(\"LITERAL\"),\n\t\t\tPrincipal: testUser.Name.ApplyT(func(name string) (string, error) {\n\t\t\t\treturn fmt.Sprintf(\"User:%v\", name), nil\n\t\t\t}).(pulumi.StringOutput),\n\t\t\tHost:           pulumi.String(\"*\"),\n\t\t\tOperation:      pulumi.String(\"READ\"),\n\t\t\tPermissionType: pulumi.String(\"ALLOW\"),\n\t\t\tClusterApiUrl:  testCluster.ClusterApiUrl,\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tnamespaceName := \"testname\"\n\t\tif param := cfg.Get(\"namespaceName\"); param != \"\" {\n\t\t\tnamespaceName = param\n\t\t}\n\t\tnetworkName := \"testname\"\n\t\tif param := cfg.Get(\"networkName\"); param != \"\" {\n\t\t\tnetworkName = param\n\t\t}\n\t\tclusterName := \"testname\"\n\t\tif param := cfg.Get(\"clusterName\"); param != \"\" {\n\t\t\tclusterName = param\n\t\t}\n\t\tuserName := \"test-username\"\n\t\tif param := cfg.Get(\"userName\"); param != \"\" {\n\t\t\tuserName = param\n\t\t}\n\t\ttopicName := \"test-topic\"\n\t\tif param := cfg.Get(\"topicName\"); param != \"\" {\n\t\t\ttopicName = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.Namespace;\nimport com.pulumi.redpanda.Network;\nimport com.pulumi.redpanda.NetworkArgs;\nimport com.pulumi.redpanda.Cluster;\nimport com.pulumi.redpanda.ClusterArgs;\nimport com.pulumi.redpanda.User;\nimport com.pulumi.redpanda.UserArgs;\nimport com.pulumi.redpanda.Topic;\nimport com.pulumi.redpanda.TopicArgs;\nimport com.pulumi.redpanda.Acl;\nimport com.pulumi.redpanda.AclArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        var testNamespace = new Namespace(\"testNamespace\");\n\n        final var region = config.get(\"region\").orElse(\"us-east-1\");\n        final var cloudProvider = config.get(\"cloudProvider\").orElse(\"aws\");\n        var testNetwork = new Network(\"testNetwork\", NetworkArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .cidrBlock(\"10.0.0.0/20\")\n            .build());\n\n        final var zones = config.get(\"zones\").orElse(        \n            \"use1-az2\",\n            \"use1-az4\",\n            \"use1-az6\");\n        final var throughputTier = config.get(\"throughputTier\").orElse(\"tier-1-aws-v2-arm\");\n        var testCluster = new Cluster(\"testCluster\", ClusterArgs.builder()        \n            .namespaceId(testNamespace.id())\n            .networkId(testNetwork.id())\n            .cloudProvider(cloudProvider)\n            .region(region)\n            .clusterType(\"dedicated\")\n            .connectionType(\"public\")\n            .throughputTier(throughputTier)\n            .zones(zones)\n            .allowDeletion(true)\n            .tags(Map.of(\"key\", \"value\"))\n            .build());\n\n        final var userPw = config.get(\"userPw\").orElse(\"password\");\n        final var mechanism = config.get(\"mechanism\").orElse(\"scram-sha-256\");\n        var testUser = new User(\"testUser\", UserArgs.builder()        \n            .password(userPw)\n            .mechanism(mechanism)\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .build());\n\n        final var partitionCount = config.get(\"partitionCount\").orElse(3);\n        final var replicationFactor = config.get(\"replicationFactor\").orElse(3);\n        var testTopic = new Topic(\"testTopic\", TopicArgs.builder()        \n            .partitionCount(partitionCount)\n            .replicationFactor(replicationFactor)\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .allowDeletion(true)\n            .build());\n\n        var testAcl = new Acl(\"testAcl\", AclArgs.builder()        \n            .resourceType(\"TOPIC\")\n            .resourceName(testTopic.name())\n            .resourcePatternType(\"LITERAL\")\n            .principal(testUser.name().applyValue(name -\u003e String.format(\"User:%s\", name)))\n            .host(\"*\")\n            .operation(\"READ\")\n            .permissionType(\"ALLOW\")\n            .clusterApiUrl(testCluster.clusterApiUrl())\n            .build());\n\n        final var namespaceName = config.get(\"namespaceName\").orElse(\"testname\");\n        final var networkName = config.get(\"networkName\").orElse(\"testname\");\n        final var clusterName = config.get(\"clusterName\").orElse(\"testname\");\n        final var userName = config.get(\"userName\").orElse(\"test-username\");\n        final var topicName = config.get(\"topicName\").orElse(\"test-topic\");\n    }\n}\n```\n```yaml\nconfiguration:\n  namespaceName:\n    type: string\n    default: testname\n  networkName:\n    type: string\n    default: testname\n  clusterName:\n    type: string\n    default: testname\n  region:\n    type: string\n    default: us-east-1\n  zones:\n    type: dynamic\n    default:\n      - use1-az2\n      - use1-az4\n      - use1-az6\n  cloudProvider:\n    type: string\n    default: aws\n  throughputTier:\n    type: string\n    default: tier-1-aws-v2-arm\n  userName:\n    type: string\n    default: test-username\n  userPw:\n    type: string\n    default: password\n  mechanism:\n    type: string\n    default: scram-sha-256\n  topicName:\n    type: string\n    default: test-topic\n  partitionCount:\n    type: number\n    default: 3\n  replicationFactor:\n    type: number\n    default: 3\nresources:\n  testNamespace:\n    type: redpanda:Namespace\n  testNetwork:\n    type: redpanda:Network\n    properties:\n      namespaceId: ${testNamespace.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      cidrBlock: 10.0.0.0/20\n  testCluster:\n    type: redpanda:Cluster\n    properties:\n      namespaceId: ${testNamespace.id}\n      networkId: ${testNetwork.id}\n      cloudProvider: ${cloudProvider}\n      region: ${region}\n      clusterType: dedicated\n      connectionType: public\n      throughputTier: ${throughputTier}\n      zones: ${zones}\n      allowDeletion: true\n      tags:\n        key: value\n  testUser:\n    type: redpanda:User\n    properties:\n      password: ${userPw}\n      mechanism: ${mechanism}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n  testTopic:\n    type: redpanda:Topic\n    properties:\n      partitionCount: ${partitionCount}\n      replicationFactor: ${replicationFactor}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n      allowDeletion: true\n  testAcl:\n    type: redpanda:Acl\n    properties:\n      resourceType: TOPIC\n      resourceName: ${testTopic.name}\n      resourcePatternType: LITERAL\n      principal: User:${testUser.name}\n      host: '*'\n      operation: READ\n      permissionType: ALLOW\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Limitations\n\nWe are not currently able to support topic creation in self hosted clusters. This is an area of active development so expect that to change soon.\n\n## Import\n\n```sh\n$ pulumi import redpanda:index/topic:Topic example topicName,clusterId\n```\n\nWhere clusterId is the ID of the cluster in Redpanda Cloud\n\n",
+            "properties": {
+                "allowDeletion": {
+                    "type": "boolean",
+                    "description": "Indicates whether the topic can be deleted.\n"
+                },
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "configuration": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "A map of string key/value pairs of topic configurations.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the topic.\n"
+                },
+                "partitionCount": {
+                    "type": "number",
+                    "description": "The number of partitions for the topic. This determines how the data is distributed across brokers.\n"
+                },
+                "replicationFactor": {
+                    "type": "number",
+                    "description": "The replication factor for the topic, which defines how many copies of the data are kept across different brokers for fault tolerance.\n"
+                }
+            },
+            "required": [
+                "clusterApiUrl",
+                "configuration",
+                "name",
+                "partitionCount",
+                "replicationFactor"
+            ],
+            "inputProperties": {
+                "allowDeletion": {
+                    "type": "boolean",
+                    "description": "Indicates whether the topic can be deleted.\n"
+                },
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "configuration": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "A map of string key/value pairs of topic configurations.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the topic.\n"
+                },
+                "partitionCount": {
+                    "type": "number",
+                    "description": "The number of partitions for the topic. This determines how the data is distributed across brokers.\n"
+                },
+                "replicationFactor": {
+                    "type": "number",
+                    "description": "The replication factor for the topic, which defines how many copies of the data are kept across different brokers for fault tolerance.\n"
+                }
+            },
+            "requiredInputs": [
+                "clusterApiUrl"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Topic resources.\n",
+                "properties": {
+                    "allowDeletion": {
+                        "type": "boolean",
+                        "description": "Indicates whether the topic can be deleted.\n"
+                    },
+                    "clusterApiUrl": {
+                        "type": "string",
+                        "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                    },
+                    "configuration": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "A map of string key/value pairs of topic configurations.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the topic.\n"
+                    },
+                    "partitionCount": {
+                        "type": "number",
+                        "description": "The number of partitions for the topic. This determines how the data is distributed across brokers.\n"
+                    },
+                    "replicationFactor": {
+                        "type": "number",
+                        "description": "The replication factor for the topic, which defines how many copies of the data are kept across different brokers for fault tolerance.\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "redpanda:index/user:User": {
+            "description": "\n\n## Import\n\n```sh\n$ pulumi import redpanda:index/user:User example userName,clusterId\n```\n\nWhere clusterId is the ID of the cluster in Redpanda Cloud\n\n",
+            "properties": {
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "mechanism": {
+                    "type": "string",
+                    "description": "Which authentication method to use, see https://docs.redpanda.com/current/manage/security/authentication/ for more information\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the user, must be unique\n"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password of the user\n",
+                    "secret": true
+                }
+            },
+            "required": [
+                "clusterApiUrl",
+                "name",
+                "password"
+            ],
+            "inputProperties": {
+                "clusterApiUrl": {
+                    "type": "string",
+                    "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                },
+                "mechanism": {
+                    "type": "string",
+                    "description": "Which authentication method to use, see https://docs.redpanda.com/current/manage/security/authentication/ for more information\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the user, must be unique\n"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password of the user\n",
+                    "secret": true
+                }
+            },
+            "requiredInputs": [
+                "clusterApiUrl",
+                "password"
+            ],
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering User resources.\n",
+                "properties": {
+                    "clusterApiUrl": {
+                        "type": "string",
+                        "description": "The cluster API URL. Changing this will prevent deletion of the resource on the existing cluster. It is generally a better idea to delete an existing resource and create a new one than to change this value unless you are planning to do state imports\n"
+                    },
+                    "mechanism": {
+                        "type": "string",
+                        "description": "Which authentication method to use, see https://docs.redpanda.com/current/manage/security/authentication/ for more information\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the user, must be unique\n"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password of the user\n",
+                        "secret": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "functions": {
+        "redpanda:index/getCluster:getCluster": {
+            "description": "Data source for a Redpanda Cloud cluster\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst example = redpanda.getCluster({\n    id: \"cluster_id\",\n});\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\nexample = redpanda.get_cluster(id=\"cluster_id\")\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = Redpanda.GetCluster.Invoke(new()\n    {\n        Id = \"cluster_id\",\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := redpanda.LookupCluster(ctx, \u0026redpanda.LookupClusterArgs{\n\t\t\tId: \"cluster_id\",\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.RedpandaFunctions;\nimport com.pulumi.redpanda.inputs.GetClusterArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var example = RedpandaFunctions.getCluster(GetClusterArgs.builder()\n            .id(\"cluster_id\")\n            .build());\n\n    }\n}\n```\n```yaml\nvariables:\n  example:\n    fn::invoke:\n      Function: redpanda:getCluster\n      Arguments:\n        id: cluster_id\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n### Example Usage of a data source BYOC to manage users and ACLs\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst config = new pulumi.Config();\nconst clusterId = config.get(\"clusterId\") || \"\";\nconst testCluster = redpanda.getCluster({\n    id: clusterId,\n});\nconst userPw = config.get(\"userPw\") || \"password\";\nconst mechanism = config.get(\"mechanism\") || \"scram-sha-256\";\nconst testUser = new redpanda.User(\"testUser\", {\n    password: userPw,\n    mechanism: mechanism,\n    clusterApiUrl: testCluster.then(testCluster =\u003e testCluster.clusterApiUrl),\n});\nconst testAcl = new redpanda.Acl(\"testAcl\", {\n    resourceType: \"CLUSTER\",\n    resourceName: \"kafka-cluster\",\n    resourcePatternType: \"LITERAL\",\n    principal: pulumi.interpolate`User:${testUser.name}`,\n    host: \"*\",\n    operation: \"ALTER\",\n    permissionType: \"ALLOW\",\n    clusterApiUrl: testCluster.then(testCluster =\u003e testCluster.clusterApiUrl),\n});\nconst userName = config.get(\"userName\") || \"test-username\";\nconst topicName = config.get(\"topicName\") || \"test-topic\";\nconst partitionCount = config.getNumber(\"partitionCount\") || 3;\nconst replicationFactor = config.getNumber(\"replicationFactor\") || 3;\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\nconfig = pulumi.Config()\ncluster_id = config.get(\"clusterId\")\nif cluster_id is None:\n    cluster_id = \"\"\ntest_cluster = redpanda.get_cluster(id=cluster_id)\nuser_pw = config.get(\"userPw\")\nif user_pw is None:\n    user_pw = \"password\"\nmechanism = config.get(\"mechanism\")\nif mechanism is None:\n    mechanism = \"scram-sha-256\"\ntest_user = redpanda.User(\"testUser\",\n    password=user_pw,\n    mechanism=mechanism,\n    cluster_api_url=test_cluster.cluster_api_url)\ntest_acl = redpanda.Acl(\"testAcl\",\n    resource_type=\"CLUSTER\",\n    resource_name_=\"kafka-cluster\",\n    resource_pattern_type=\"LITERAL\",\n    principal=test_user.name.apply(lambda name: f\"User:{name}\"),\n    host=\"*\",\n    operation=\"ALTER\",\n    permission_type=\"ALLOW\",\n    cluster_api_url=test_cluster.cluster_api_url)\nuser_name = config.get(\"userName\")\nif user_name is None:\n    user_name = \"test-username\"\ntopic_name = config.get(\"topicName\")\nif topic_name is None:\n    topic_name = \"test-topic\"\npartition_count = config.get_float(\"partitionCount\")\nif partition_count is None:\n    partition_count = 3\nreplication_factor = config.get_float(\"replicationFactor\")\nif replication_factor is None:\n    replication_factor = 3\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var config = new Config();\n    var clusterId = config.Get(\"clusterId\") ?? \"\";\n    var testCluster = Redpanda.GetCluster.Invoke(new()\n    {\n        Id = clusterId,\n    });\n\n    var userPw = config.Get(\"userPw\") ?? \"password\";\n    var mechanism = config.Get(\"mechanism\") ?? \"scram-sha-256\";\n    var testUser = new Redpanda.User(\"testUser\", new()\n    {\n        Password = userPw,\n        Mechanism = mechanism,\n        ClusterApiUrl = testCluster.Apply(getClusterResult =\u003e getClusterResult.ClusterApiUrl),\n    });\n\n    var testAcl = new Redpanda.Acl(\"testAcl\", new()\n    {\n        ResourceType = \"CLUSTER\",\n        ResourceName = \"kafka-cluster\",\n        ResourcePatternType = \"LITERAL\",\n        Principal = testUser.Name.Apply(name =\u003e $\"User:{name}\"),\n        Host = \"*\",\n        Operation = \"ALTER\",\n        PermissionType = \"ALLOW\",\n        ClusterApiUrl = testCluster.Apply(getClusterResult =\u003e getClusterResult.ClusterApiUrl),\n    });\n\n    var userName = config.Get(\"userName\") ?? \"test-username\";\n    var topicName = config.Get(\"topicName\") ?? \"test-topic\";\n    var partitionCount = config.GetDouble(\"partitionCount\") ?? 3;\n    var replicationFactor = config.GetDouble(\"replicationFactor\") ?? 3;\n});\n```\n```go\npackage main\n\nimport (\n\t\"fmt\"\n\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\tcfg := config.New(ctx, \"\")\n\t\tclusterId := \"\"\n\t\tif param := cfg.Get(\"clusterId\"); param != \"\" {\n\t\t\tclusterId = param\n\t\t}\n\t\ttestCluster, err := redpanda.LookupCluster(ctx, \u0026redpanda.LookupClusterArgs{\n\t\t\tId: clusterId,\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserPw := \"password\"\n\t\tif param := cfg.Get(\"userPw\"); param != \"\" {\n\t\t\tuserPw = param\n\t\t}\n\t\tmechanism := \"scram-sha-256\"\n\t\tif param := cfg.Get(\"mechanism\"); param != \"\" {\n\t\t\tmechanism = param\n\t\t}\n\t\ttestUser, err := redpanda.NewUser(ctx, \"testUser\", \u0026redpanda.UserArgs{\n\t\t\tPassword:      pulumi.String(userPw),\n\t\t\tMechanism:     pulumi.String(mechanism),\n\t\t\tClusterApiUrl: pulumi.String(testCluster.ClusterApiUrl),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = redpanda.NewAcl(ctx, \"testAcl\", \u0026redpanda.AclArgs{\n\t\t\tResourceType:        pulumi.String(\"CLUSTER\"),\n\t\t\tResourceName:        pulumi.String(\"kafka-cluster\"),\n\t\t\tResourcePatternType: pulumi.String(\"LITERAL\"),\n\t\t\tPrincipal: testUser.Name.ApplyT(func(name string) (string, error) {\n\t\t\t\treturn fmt.Sprintf(\"User:%v\", name), nil\n\t\t\t}).(pulumi.StringOutput),\n\t\t\tHost:           pulumi.String(\"*\"),\n\t\t\tOperation:      pulumi.String(\"ALTER\"),\n\t\t\tPermissionType: pulumi.String(\"ALLOW\"),\n\t\t\tClusterApiUrl:  pulumi.String(testCluster.ClusterApiUrl),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\tuserName := \"test-username\"\n\t\tif param := cfg.Get(\"userName\"); param != \"\" {\n\t\t\tuserName = param\n\t\t}\n\t\ttopicName := \"test-topic\"\n\t\tif param := cfg.Get(\"topicName\"); param != \"\" {\n\t\t\ttopicName = param\n\t\t}\n\t\tpartitionCount := float64(3)\n\t\tif param := cfg.GetFloat64(\"partitionCount\"); param != 0 {\n\t\t\tpartitionCount = param\n\t\t}\n\t\treplicationFactor := float64(3)\n\t\tif param := cfg.GetFloat64(\"replicationFactor\"); param != 0 {\n\t\t\treplicationFactor = param\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.RedpandaFunctions;\nimport com.pulumi.redpanda.inputs.GetClusterArgs;\nimport com.pulumi.redpanda.User;\nimport com.pulumi.redpanda.UserArgs;\nimport com.pulumi.redpanda.Acl;\nimport com.pulumi.redpanda.AclArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var config = ctx.config();\n        final var clusterId = config.get(\"clusterId\").orElse(\"\");\n        final var testCluster = RedpandaFunctions.getCluster(GetClusterArgs.builder()\n            .id(clusterId)\n            .build());\n\n        final var userPw = config.get(\"userPw\").orElse(\"password\");\n        final var mechanism = config.get(\"mechanism\").orElse(\"scram-sha-256\");\n        var testUser = new User(\"testUser\", UserArgs.builder()        \n            .password(userPw)\n            .mechanism(mechanism)\n            .clusterApiUrl(testCluster.applyValue(getClusterResult -\u003e getClusterResult.clusterApiUrl()))\n            .build());\n\n        var testAcl = new Acl(\"testAcl\", AclArgs.builder()        \n            .resourceType(\"CLUSTER\")\n            .resourceName(\"kafka-cluster\")\n            .resourcePatternType(\"LITERAL\")\n            .principal(testUser.name().applyValue(name -\u003e String.format(\"User:%s\", name)))\n            .host(\"*\")\n            .operation(\"ALTER\")\n            .permissionType(\"ALLOW\")\n            .clusterApiUrl(testCluster.applyValue(getClusterResult -\u003e getClusterResult.clusterApiUrl()))\n            .build());\n\n        final var userName = config.get(\"userName\").orElse(\"test-username\");\n        final var topicName = config.get(\"topicName\").orElse(\"test-topic\");\n        final var partitionCount = config.get(\"partitionCount\").orElse(3);\n        final var replicationFactor = config.get(\"replicationFactor\").orElse(3);\n    }\n}\n```\n```yaml\nconfiguration:\n  clusterId:\n    type: string\n    default:\n  userName:\n    type: string\n    default: test-username\n  userPw:\n    type: string\n    default: password\n  mechanism:\n    type: string\n    default: scram-sha-256\n  topicName:\n    type: string\n    default: test-topic\n  partitionCount:\n    type: number\n    default: 3\n  replicationFactor:\n    type: number\n    default: 3\nresources:\n  testUser:\n    type: redpanda:User\n    properties:\n      password: ${userPw}\n      mechanism: ${mechanism}\n      clusterApiUrl: ${testCluster.clusterApiUrl}\n  testAcl:\n    type: redpanda:Acl\n    properties:\n      resourceType: CLUSTER\n      resourceName: kafka-cluster\n      resourcePatternType: LITERAL\n      principal: User:${testUser.name}\n      host: '*'\n      operation: ALTER\n      permissionType: ALLOW\n      clusterApiUrl: ${testCluster.clusterApiUrl}\nvariables:\n  testCluster:\n    fn::invoke:\n      Function: redpanda:getCluster\n      Arguments:\n        id: ${clusterId}\n```\n\u003c!--End PulumiCodeChooser --\u003e\n\n## Limitations\n\nCan only be used with Redpanda Cloud Dedicated and BYOC clusters.\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getCluster.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The id of the cluster\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getCluster.\n",
+                "properties": {
+                    "allowDeletion": {
+                        "type": "boolean",
+                        "description": "allows deletion of the cluster. defaults to true. Not recommended for production use\n"
+                    },
+                    "cloudProvider": {
+                        "type": "string",
+                        "description": "Must be one of aws or gcp\n"
+                    },
+                    "clusterApiUrl": {
+                        "type": "string",
+                        "description": "The URL of the cluster API\n"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "description": "Type of the cluster\n"
+                    },
+                    "connectionType": {
+                        "type": "string",
+                        "description": "Connection type of the cluster\n"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The id of the cluster\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the cluster\n"
+                    },
+                    "namespaceId": {
+                        "type": "string",
+                        "description": "The id of the namespace in which to create the cluster\n"
+                    },
+                    "networkId": {
+                        "type": "string",
+                        "description": "The id of the network in which to create the cluster\n"
+                    },
+                    "redpandaVersion": {
+                        "type": "string",
+                        "description": "Version of Redpanda to deploy\n"
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "Cloud provider specific region of the cluster\n"
+                    },
+                    "tags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Tags to apply to the cluster\n"
+                    },
+                    "throughputTier": {
+                        "type": "string",
+                        "description": "Throughput tier of the cluster\n"
+                    },
+                    "zones": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Cloud provider specific zones of the cluster\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "allowDeletion",
+                    "cloudProvider",
+                    "clusterApiUrl",
+                    "clusterType",
+                    "connectionType",
+                    "id",
+                    "name",
+                    "namespaceId",
+                    "networkId",
+                    "redpandaVersion",
+                    "region",
+                    "tags",
+                    "throughputTier",
+                    "zones"
+                ]
+            }
+        },
+        "redpanda:index/getNamespace:getNamespace": {
+            "description": "Data source for a Redpanda Cloud namespace\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst example = redpanda.getNamespace({\n    id: \"namespace_id\",\n});\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\nexample = redpanda.get_namespace(id=\"namespace_id\")\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = Redpanda.GetNamespace.Invoke(new()\n    {\n        Id = \"namespace_id\",\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := redpanda.LookupNamespace(ctx, \u0026redpanda.LookupNamespaceArgs{\n\t\t\tId: \"namespace_id\",\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.RedpandaFunctions;\nimport com.pulumi.redpanda.inputs.GetNamespaceArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var example = RedpandaFunctions.getNamespace(GetNamespaceArgs.builder()\n            .id(\"namespace_id\")\n            .build());\n\n    }\n}\n```\n```yaml\nvariables:\n  example:\n    fn::invoke:\n      Function: redpanda:getNamespace\n      Arguments:\n        id: namespace_id\n```\n\u003c!--End PulumiCodeChooser --\u003e\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getNamespace.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "UUID of the namespace\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getNamespace.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "UUID of the namespace\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the namespace\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name"
+                ]
+            }
+        },
+        "redpanda:index/getNetwork:getNetwork": {
+            "description": "Data source for a Redpanda Cloud network\n\n\n## Usage\n\n\u003c!--Start PulumiCodeChooser --\u003e\n```typescript\nimport * as pulumi from \"@pulumi/pulumi\";\nimport * as redpanda from \"@pulumi/redpanda\";\n\nconst example = redpanda.getNetwork({\n    id: \"network_id\",\n});\n```\n```python\nimport pulumi\nimport pulumi_redpanda as redpanda\n\nexample = redpanda.get_network(id=\"network_id\")\n```\n```csharp\nusing System.Collections.Generic;\nusing System.Linq;\nusing Pulumi;\nusing Redpanda = Pulumi.Redpanda;\n\nreturn await Deployment.RunAsync(() =\u003e \n{\n    var example = Redpanda.GetNetwork.Invoke(new()\n    {\n        Id = \"network_id\",\n    });\n\n});\n```\n```go\npackage main\n\nimport (\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n\t\"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := redpanda.LookupNetwork(ctx, \u0026redpanda.LookupNetworkArgs{\n\t\t\tId: \"network_id\",\n\t\t}, nil)\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\treturn nil\n\t})\n}\n```\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.redpanda.RedpandaFunctions;\nimport com.pulumi.redpanda.inputs.GetNetworkArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        final var example = RedpandaFunctions.getNetwork(GetNetworkArgs.builder()\n            .id(\"network_id\")\n            .build());\n\n    }\n}\n```\n```yaml\nvariables:\n  example:\n    fn::invoke:\n      Function: redpanda:getNetwork\n      Arguments:\n        id: network_id\n```\n\u003c!--End PulumiCodeChooser --\u003e\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getNetwork.\n",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "UUID of the network\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getNetwork.\n",
+                "properties": {
+                    "cidrBlock": {
+                        "type": "string",
+                        "description": "The cidr_block to create the network in\n"
+                    },
+                    "cloudProvider": {
+                        "type": "string",
+                        "description": "The cloud provider to create the network in. Can also be set at the provider level\n"
+                    },
+                    "clusterType": {
+                        "type": "string",
+                        "description": "The type of cluster this network is associated with, can be one of dedicated or cloud\n"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "UUID of the network\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the network\n"
+                    },
+                    "namespaceId": {
+                        "type": "string",
+                        "description": "The id of the namespace in which to create the network\n"
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "The region to create the network in. Can also be set at the provider level\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "cidrBlock",
+                    "cloudProvider",
+                    "clusterType",
+                    "id",
+                    "name",
+                    "namespaceId",
+                    "region"
+                ]
+            }
+        }
+    }
+}
