@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate go run ./generate.go
-
 package main
 
 import (
+	"context"
 	_ "embed"
 
-	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge"
+	"github.com/pulumi/pulumi-terraform-bridge/pf/tfbridge"
 	redpanda "github.com/videmsky/pulumi-redpanda/provider"
-	"github.com/videmsky/pulumi-redpanda/provider/pkg/version"
 )
 
-//go:embed schema-embed.json
+//go:embed schema.json
 var pulumiSchema []byte
 
 func main() {
 	// Modify the path to point to the new provider
-	tfbridge.Main("redpanda", version.Version, redpanda.Provider(), pulumiSchema)
+	tfbridge.Main(context.Background(), "redpanda", redpanda.Provider(), tfbridge.ProviderMetadata{
+		PackageSchema: pulumiSchema,
+	})
 }
