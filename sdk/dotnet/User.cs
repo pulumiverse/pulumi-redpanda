@@ -68,6 +68,7 @@ namespace Pulumi.Redpanda
             var defaultOptions = new CustomResourceOptions
             {
                 Version = Utilities.Version,
+                PluginDownloadURL = "https://github.com/videmsky/pulumi-redpanda/releases/",
                 AdditionalSecretOutputs =
                 {
                     "password",

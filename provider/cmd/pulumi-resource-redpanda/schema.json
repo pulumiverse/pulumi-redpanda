@@ -10,6 +10,7 @@
     "license": "Apache-2.0",
     "attribution": "This Pulumi package is based on the [`redpanda` Terraform Provider](https://github.com/redpanda-data/terraform-provider-redpanda).",
     "repository": "https://github.com/videmsky/pulumi-redpanda",
+    "pluginDownloadURL": "https://github.com/videmsky/pulumi-redpanda/releases/",
     "publisher": "videmsky",
     "meta": {
         "moduleFormat": "(.*)(?:/[^/]*)"

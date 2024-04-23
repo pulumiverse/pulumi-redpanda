@@ -23,6 +23,7 @@
     },
     "pulumi": {
         "resource": true,
-        "name": "redpanda"
+        "name": "redpanda",
+        "server": "https://github.com/videmsky/pulumi-redpanda/releases/"
     }
 }
