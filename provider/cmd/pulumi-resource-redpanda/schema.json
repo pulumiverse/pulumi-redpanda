@@ -1,5 +1,6 @@
 {
     "name": "redpanda",
+    "displayName": "Redpanda",
     "description": "A Pulumi package for creating and managing redpanda cloud resources.",
     "keywords": [
         "videmsky",
