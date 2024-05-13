@@ -18,7 +18,7 @@ builds:
       - linux
     ldflags:
       # The line below MUST align with the module in current provider/go.mod
-      - -X github.com/videmsky/pulumi-redpanda/provider/pkg/version.Version={{.Tag }}
+      - -X github.com/pulumiverse/pulumi-redpanda/provider/pkg/version.Version={{.Tag }}
     main: ./cmd/pulumi-resource-redpanda/
 changelog:
   skip: true
