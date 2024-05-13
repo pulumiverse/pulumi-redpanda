@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
+using Pulumi;
 
-namespace Pulumi.Redpanda
+namespace Pulumiverse.Redpanda
 {
     public static class GetCluster
     {
@@ -43,6 +44,7 @@ namespace Pulumi.Redpanda
         /// using System.Linq;
         /// using Pulumi;
         /// using Redpanda = Pulumi.Redpanda;
+        /// using Redpanda = Pulumiverse.Redpanda;
         /// 
         /// return await Deployment.RunAsync(() =&gt; 
         /// {
@@ -121,6 +123,7 @@ namespace Pulumi.Redpanda
         /// using System.Linq;
         /// using Pulumi;
         /// using Redpanda = Pulumi.Redpanda;
+        /// using Redpanda = Pulumiverse.Redpanda;
         /// 
         /// return await Deployment.RunAsync(() =&gt; 
         /// {

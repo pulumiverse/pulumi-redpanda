@@ -1,14 +1,14 @@
 {
-    "name": "@pulumi/redpanda",
+    "name": "@pulumiverse/redpanda",
     "version": "${VERSION}",
-    "description": "A Pulumi package for creating and managing redpanda cloud resources.",
+    "description": "A Pulumi package for creating and managing Redpanda cloud resources.",
     "keywords": [
-        "videmsky",
+        "pulumi",
         "redpanda",
-        "category/cloud"
+        "category/utility"
     ],
     "homepage": "https://www.pulumi.com",
-    "repository": "https://github.com/videmsky/pulumi-redpanda",
+    "repository": "https://github.com/pulumiverse/pulumi-redpanda",
     "license": "Apache-2.0",
     "scripts": {
         "build": "tsc"
@@ -24,6 +24,6 @@
     "pulumi": {
         "resource": true,
         "name": "redpanda",
-        "server": "https://github.com/videmsky/pulumi-redpanda/releases/"
+        "server": "github://api.github.com/pulumiverse"
     }
 }

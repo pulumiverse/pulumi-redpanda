@@ -19,7 +19,7 @@ import (
 	_ "embed"
 
 	"github.com/pulumi/pulumi-terraform-bridge/pf/tfbridge"
-	redpanda "github.com/videmsky/pulumi-redpanda/provider"
+	redpanda "github.com/pulumiverse/pulumi-redpanda/provider"
 )
 
 //go:embed schema.json

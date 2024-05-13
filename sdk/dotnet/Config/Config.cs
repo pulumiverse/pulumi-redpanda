@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace Pulumi.Redpanda
+namespace Pulumiverse.Redpanda
 {
     public static class Config
     {

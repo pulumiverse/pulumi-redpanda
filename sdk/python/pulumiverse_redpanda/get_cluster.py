@@ -222,6 +222,7 @@ def get_cluster(id: Optional[str] = None,
     ```python
     import pulumi
     import pulumi_redpanda as redpanda
+    import pulumiverse_redpanda as redpanda
 
     config = pulumi.Config()
     cluster_id = config.get("clusterId")
@@ -314,6 +315,7 @@ def get_cluster_output(id: Optional[pulumi.Input[str]] = None,
     ```python
     import pulumi
     import pulumi_redpanda as redpanda
+    import pulumiverse_redpanda as redpanda
 
     config = pulumi.Config()
     cluster_id = config.get("clusterId")

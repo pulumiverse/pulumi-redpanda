@@ -1,1 +1,1 @@
-A Pulumi package for creating and managing redpanda cloud resources.
+A Pulumi package for creating and managing Redpanda cloud resources.

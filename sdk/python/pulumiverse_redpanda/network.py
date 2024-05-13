@@ -236,7 +236,7 @@ class Network(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()
@@ -290,7 +290,7 @@ class Network(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()

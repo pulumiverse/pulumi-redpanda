@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda/internal"
+	"github.com/pulumiverse/pulumi-redpanda/sdk/go/redpanda/internal"
 )
 
 // The provider type for the redpanda package. By default, resources use package-wide configuration

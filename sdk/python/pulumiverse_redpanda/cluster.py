@@ -450,7 +450,7 @@ class Cluster(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()
@@ -506,7 +506,7 @@ class Cluster(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()
@@ -570,6 +570,7 @@ class Cluster(pulumi.CustomResource):
         ```python
         import pulumi
         import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         config = pulumi.Config()
         cluster_id = config.get("clusterId")
@@ -647,7 +648,7 @@ class Cluster(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()
@@ -703,7 +704,7 @@ class Cluster(pulumi.CustomResource):
         <!--Start PulumiCodeChooser -->
         ```python
         import pulumi
-        import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         test_namespace = redpanda.Namespace("testNamespace")
         config = pulumi.Config()
@@ -767,6 +768,7 @@ class Cluster(pulumi.CustomResource):
         ```python
         import pulumi
         import pulumi_redpanda as redpanda
+        import pulumiverse_redpanda as redpanda
 
         config = pulumi.Config()
         cluster_id = config.get("clusterId")

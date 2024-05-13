@@ -1,4 +1,4 @@
-module github.com/videmsky/pulumi-redpanda/examples
+module github.com/pulumiverse/pulumi-redpanda/examples
 
 go 1.21
 

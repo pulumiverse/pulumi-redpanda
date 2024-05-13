@@ -1,5 +1,5 @@
 {
   "resource": true,
   "name": "redpanda",
-  "server": "https://github.com/videmsky/pulumi-redpanda/releases/"
+  "server": "github://api.github.com/pulumiverse"
 }

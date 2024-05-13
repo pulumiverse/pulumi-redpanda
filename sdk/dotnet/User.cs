@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
+using Pulumi;
 
-namespace Pulumi.Redpanda
+namespace Pulumiverse.Redpanda
 {
     /// <summary>
     /// ## Import
@@ -68,7 +69,7 @@ namespace Pulumi.Redpanda
             var defaultOptions = new CustomResourceOptions
             {
                 Version = Utilities.Version,
-                PluginDownloadURL = "https://github.com/videmsky/pulumi-redpanda/releases/",
+                PluginDownloadURL = "github://api.github.com/pulumiverse",
                 AdditionalSecretOutputs =
                 {
                     "password",

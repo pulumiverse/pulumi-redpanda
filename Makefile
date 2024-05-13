@@ -2,8 +2,8 @@ PROJECT_NAME := redpanda Package
 
 SHELL            := /bin/bash
 PACK             := redpanda
-PROJECT          := github.com/videmsky/pulumi-redpanda
-NODE_MODULE_NAME := @videmsky/${PACK}
+PROJECT          := github.com/pulumiverse/pulumi-redpanda
+NODE_MODULE_NAME := @pulumiverse/${PACK}
 TF_NAME          := ${PACK}
 PROVIDER_PATH    := provider
 VERSION_PATH     := ${PROVIDER_PATH}/pkg/version.Version

@@ -14,7 +14,7 @@ import * as utilities from "./utilities";
  * <!--Start PulumiCodeChooser -->
  * ```typescript
  * import * as pulumi from "@pulumi/pulumi";
- * import * as redpanda from "@pulumi/redpanda";
+ * import * as redpanda from "@pulumiverse/redpanda";
  *
  * const testNamespace = new redpanda.Namespace("testNamespace", {});
  * const config = new pulumi.Config();
@@ -58,7 +58,7 @@ import * as utilities from "./utilities";
  * <!--Start PulumiCodeChooser -->
  * ```typescript
  * import * as pulumi from "@pulumi/pulumi";
- * import * as redpanda from "@pulumi/redpanda";
+ * import * as redpanda from "@pulumiverse/redpanda";
  *
  * const testNamespace = new redpanda.Namespace("testNamespace", {});
  * const config = new pulumi.Config();
@@ -110,6 +110,7 @@ import * as utilities from "./utilities";
  * ```typescript
  * import * as pulumi from "@pulumi/pulumi";
  * import * as redpanda from "@pulumi/redpanda";
+ * import * as redpanda from "@pulumiverse/redpanda";
  *
  * const config = new pulumi.Config();
  * const clusterId = config.get("clusterId") || "";

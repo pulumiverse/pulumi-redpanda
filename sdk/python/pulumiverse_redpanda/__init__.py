@@ -18,10 +18,10 @@ from .user import *
 
 # Make subpackages available:
 if typing.TYPE_CHECKING:
-    import pulumi_redpanda.config as __config
+    import pulumiverse_redpanda.config as __config
     config = __config
 else:
-    config = _utilities.lazy_import('pulumi_redpanda.config')
+    config = _utilities.lazy_import('pulumiverse_redpanda.config')
 
 _utilities.register(
     resource_modules="""
@@ -29,7 +29,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/acl",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/acl:Acl": "Acl"
   }
@@ -37,7 +37,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/cluster",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/cluster:Cluster": "Cluster"
   }
@@ -45,7 +45,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/namespace",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/namespace:Namespace": "Namespace"
   }
@@ -53,7 +53,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/network",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/network:Network": "Network"
   }
@@ -61,7 +61,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/topic",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/topic:Topic": "Topic"
   }
@@ -69,7 +69,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "mod": "index/user",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "classes": {
    "redpanda:index/user:User": "User"
   }
@@ -81,7 +81,7 @@ _utilities.register(
  {
   "pkg": "redpanda",
   "token": "pulumi:providers:redpanda",
-  "fqn": "pulumi_redpanda",
+  "fqn": "pulumiverse_redpanda",
   "class": "Provider"
  }
 ]

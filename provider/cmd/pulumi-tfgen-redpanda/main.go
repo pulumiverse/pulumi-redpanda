@@ -16,7 +16,7 @@ package main
 
 import (
 	"github.com/pulumi/pulumi-terraform-bridge/pf/tfgen"
-	redpanda "github.com/videmsky/pulumi-redpanda/provider"
+	redpanda "github.com/pulumiverse/pulumi-redpanda/provider"
 )
 
 func main() {

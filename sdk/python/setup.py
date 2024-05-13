@@ -17,21 +17,21 @@ def readme():
         return "redpanda Pulumi Package - Development Version"
 
 
-setup(name='pulumi_redpanda',
+setup(name='pulumiverse_redpanda',
       python_requires='>=3.8',
       version=VERSION,
-      description="A Pulumi package for creating and managing redpanda cloud resources.",
+      description="A Pulumi package for creating and managing Redpanda cloud resources.",
       long_description=readme(),
       long_description_content_type='text/markdown',
-      keywords='videmsky redpanda category/cloud',
+      keywords='pulumi redpanda category/utility',
       url='https://www.pulumi.com',
       project_urls={
-          'Repository': 'https://github.com/videmsky/pulumi-redpanda'
+          'Repository': 'https://github.com/pulumiverse/pulumi-redpanda'
       },
       license='Apache-2.0',
       packages=find_packages(),
       package_data={
-          'pulumi_redpanda': [
+          'pulumiverse_redpanda': [
               'py.typed',
               'pulumi-plugin.json',
           ]

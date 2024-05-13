@@ -1,4 +1,4 @@
-module github.com/videmsky/pulumi-redpanda/provider
+module github.com/pulumiverse/pulumi-redpanda/provider
 
 go 1.21.3
 

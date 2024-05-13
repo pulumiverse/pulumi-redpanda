@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
+using Pulumi;
 
-namespace Pulumi.Redpanda
+namespace Pulumiverse.Redpanda
 {
     public static class GetNetwork
     {

@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda/internal"
+	"github.com/pulumiverse/pulumi-redpanda/sdk/go/redpanda/internal"
 )
 
 // Data source for a Redpanda Cloud namespace
@@ -22,7 +22,7 @@ import (
 // import (
 //
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-//	"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda"
+//	"github.com/pulumiverse/pulumi-redpanda/sdk/go/redpanda"
 //
 // )
 //

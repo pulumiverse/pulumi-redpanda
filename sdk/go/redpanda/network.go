@@ -9,7 +9,7 @@ import (
 
 	"errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda/internal"
+	"github.com/pulumiverse/pulumi-redpanda/sdk/go/redpanda/internal"
 )
 
 // Creates a network in the Redpanda Cloud.
@@ -24,7 +24,7 @@ import (
 //
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 //	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
-//	"github.com/videmsky/pulumi-redpanda/sdk/go/redpanda"
+//	"github.com/pulumiverse/pulumi-redpanda/sdk/go/redpanda"
 //
 // )
 //
