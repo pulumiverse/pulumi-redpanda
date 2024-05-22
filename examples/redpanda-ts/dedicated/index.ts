@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as redpanda from "@pulumi/redpanda";
+import * as redpanda from "@pulumiverse/redpanda";
 
 const region = "us-east-1";
 const cloudProvider = "aws";
