@@ -70,74 +70,71 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4.0.0
+      - name: Checkout Scripts Repo
+        uses: actions/checkout@v4
+        with:
+          path: ci-scripts
+          repository: jaxxstorm/scripts
+          ref: third_party
       - name: Unshallow clone for tags
         run: git fetch --prune --unshallow --tags
       - name: Install Go
-        uses: actions/setup-go@v5.0.0
+        uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.goversion }}
+          go-version: ${{matrix.goversion}}
       - name: Install pulumictl
-        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
         with:
           repo: pulumi/pulumictl
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v2.0.0
+        uses: pulumi/actions@v5
       - name: Setup Node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.nodeversion}}
-          registry-url: ${{env.NPM_REGISTRY_URL}}
+          registry-url: https://registry.npmjs.org
       - name: Setup DotNet
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{matrix.dotnetverson}}
+          dotnet-version: ${{matrix.dotnetversion}}
       - name: Setup Python
-        uses: actions/setup-python@v4.2.0
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.pythonversion}}
-      - name: Build SDK
-        run: make build_${{ matrix.language }}
-      - name: Check worktree clean
-        run: |
-          git update-index -q --refresh
-          if ! git diff-files --quiet; then
-              >&2 echo "error: working tree is not clean, aborting!"
-              git status
-              git diff
-              exit 1
-          fi
-      - if: ${{ matrix.language == 'python' && env.PUBLISH_PYPI == 'true' }}
-        name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.8.10
+      - name: Download python SDK
+        uses: actions/download-artifact@v4
         with:
-          user: ${{ env.PYPI_USERNAME }}
-          password: ${{ env.PYPI_PASSWORD }}
-          packages_dir: ${{github.workspace}}/sdk/python/bin/dist
-      - if: ${{ matrix.language == 'nodejs' && env.PUBLISH_NPM == 'true' }}
-        uses: JS-DevTools/npm-publish@v2.2.2
+          name: python-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/
+      - name: Uncompress python SDK
+        run: tar -zxf ${{github.workspace}}/sdk/python.tar.gz -C ${{github.workspace}}/sdk/python
+      - name: Download dotnet SDK
+        uses: actions/download-artifact@v4
         with:
-          access: "public"
-          token: ${{ env.NPM_TOKEN }}
-          package: ${{github.workspace}}/sdk/nodejs/bin/package.json
-          provenance: true
-      - if: ${{ matrix.language == 'dotnet' && env.PUBLISH_NUGET == 'true' }}
-        name: publish nuget package
-        run: |
-          dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_PUBLISH_KEY }}
-          echo "done publishing packages"
+          name: dotnet-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/
+      - name: Uncompress dotnet SDK
+        run: tar -zxf ${{github.workspace}}/sdk/dotnet.tar.gz -C ${{github.workspace}}/sdk/dotnet
+      - name: Download nodejs SDK
+        uses: actions/download-artifact@v4
+        with:
+          name: nodejs-sdk.tar.gz
+          path: ${{ github.workspace}}/sdk/
+      - name: Uncompress nodejs SDK
+        run: tar -zxf ${{github.workspace}}/sdk/nodejs.tar.gz -C ${{github.workspace}}/sdk/nodejs
+      - run: python -m pip install pip twine
+      - env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        name: Publish SDKs
+        run: ./ci-scripts/ci/publish-tfgen-package ${{ github.workspace }}
     strategy:
       fail-fast: true
       matrix:
         dotnetversion:
-          - 3.1.301
+        - 3.1.301
         goversion:
-          - 1.21.x
-        language:
-          - nodejs
-          - python
-          - dotnet
-          - go
+        - 1.22.x
         nodeversion:
-          - 18.x
+        - 18.x
         pythonversion:
-          - "3.9"
+        - "3.9"
