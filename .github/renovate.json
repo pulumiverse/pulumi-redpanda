@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+      "helpers:pinGitHubActionDigests",
+      "group:githubArtifactActions",
+      "schedule:earlyMondays"
+  ],
+  "constraints": {
+      "go": "1.22"
+  },
+  "packageRules": [
+      {
+          "matchFileNames": [
+              "provider/**"
+          ],
+          "matchDatasources": [
+              "go"
+          ],
+          "excludePackagePrefixes": [
+              "github.com/hashicorp/terraform-plugin-sdk",
+              "github.com/pulumi/pulumi",
+              "github.com/redpanda-data/terraform-provider-redpanda"
+          ],
+          "enabled": true
+      },
+      {
+          "matchFileNames": [
+              "examples/**"
+          ],
+          "matchDatasources": [
+              "go"
+          ]
+      },
+      {
+          "matchFileNames": [
+              "sdk/**"
+          ],
+          "enabled": false
+      }
+  ],
+  "dependencyDashboard": true
+}
