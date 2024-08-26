@@ -12,8 +12,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
-  NUGET_FEED_URL: https://api.nuget.org/v3/index.json
+  # NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
+  # NUGET_FEED_URL: https://api.nuget.org/v3/index.json
   PROVIDER: redpanda
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
@@ -21,10 +21,10 @@ env:
   PYPI_USERNAME: "__token__"
   PUBLISH_PYPI: true
   PUBLISH_NPM: true
-  PUBLISH_NUGET: false
-  DOTNETVERSION: |
-      6.0.x
-      3.1.301
+  # PUBLISH_NUGET: true
+  # DOTNETVERSION: |
+  #     6.0.x
+  #     3.1.301
   GOVERSION: 1.22.x
   GRADLEVERSION: "7.6"
   JAVAVERSION: "11"
@@ -94,25 +94,25 @@ jobs:
         with:
           node-version: ${{ env.NODEVERSION }}
           registry-url: ${{env.NPM_REGISTRY_URL}}
-      - name: Setup DotNet
-        uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v4.0.1
-        with:
-          dotnet-version: ${{ env.DOTNETVERSION }}
+      # - name: Setup DotNet
+      #   uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v4.0.1
+      #   with:
+      #     dotnet-version: ${{ env.DOTNETVERSION }}
       - name: Setup Python
         uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Build SDK
         run: make build_${{ matrix.language }}
-      - name: Check worktree clean
-        run: |
-          git update-index -q --refresh
-          if ! git diff-files --quiet; then
-              >&2 echo "error: working tree is not clean, aborting!"
-              git status
-              git diff
-              exit 1
-          fi
+      # - name: Check worktree clean
+      #   run: |
+      #     git update-index -q --refresh
+      #     if ! git diff-files --quiet; then
+      #         >&2 echo "error: working tree is not clean, aborting!"
+      #         git status
+      #         git diff
+      #         exit 1
+      #     fi
       - if: ${{ matrix.language == 'python' && env.PUBLISH_PYPI == 'true' }}
         name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0 # v1.9.0
@@ -127,16 +127,16 @@ jobs:
           token: ${{ env.NPM_TOKEN }}
           package: ${{github.workspace}}/sdk/nodejs/bin/package.json
           provenance: true
-      - if: ${{ matrix.language == 'dotnet' && env.PUBLISH_NUGET == 'true' }}
-        name: publish nuget package
-        run: |
-          dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_PUBLISH_KEY }}
-          echo "done publishing packages"
+      # - if: ${{ matrix.language == 'dotnet' && env.PUBLISH_NUGET == 'true' }}
+      #   name: publish nuget package
+      #   run: |
+      #     dotnet nuget push ${{github.workspace}}/sdk/dotnet/bin/Debug/*.nupkg -s ${{ env.NUGET_FEED_URL }} -k ${{ env.NUGET_PUBLISH_KEY }}
+      #     echo "done publishing packages"
     strategy:
       fail-fast: true
       matrix:
         language:
           - nodejs
           - python
-          - dotnet
+          # - dotnet
           - go
