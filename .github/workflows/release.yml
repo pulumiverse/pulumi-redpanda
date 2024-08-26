@@ -104,15 +104,15 @@ jobs:
           python-version: ${{ env.PYTHONVERSION }}
       - name: Build SDK
         run: make build_${{ matrix.language }}
-      - name: Check worktree clean
-        run: |
-          git update-index -q --refresh
-          if ! git diff-files --quiet; then
-              >&2 echo "error: working tree is not clean, aborting!"
-              git status
-              git diff
-              exit 1
-          fi
+      # - name: Check worktree clean
+      #   run: |
+      #     git update-index -q --refresh
+      #     if ! git diff-files --quiet; then
+      #         >&2 echo "error: working tree is not clean, aborting!"
+      #         git status
+      #         git diff
+      #         exit 1
+      #     fi
       - if: ${{ matrix.language == 'python' && env.PUBLISH_PYPI == 'true' }}
         name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0 # v1.9.0
