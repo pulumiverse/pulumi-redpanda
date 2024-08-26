@@ -43,13 +43,13 @@ To use from Go, use `go get` to grab the latest version of the library:
 go get github.com/pulumi/pulumi-redpanda/sdk/go/...
 ```
 
-### .NET
+<!-- ### .NET
 
 To use from .NET, install using `dotnet add package`:
 
 ```bash
 dotnet add package Pulumi.Redpanda
-```
+``` -->
 
 ## Configuration
 

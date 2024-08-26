@@ -48,13 +48,13 @@ To use from Go, use `go get` to grab the latest version of the library:
 go get github.com/pulumiverse/pulumi-redpanda/sdk/v3
 ```
 
-### .NET
+<!-- ### .NET
 
 To use from .NET, install using `dotnet add package`:
 
 ```bash
 dotnet add package Pulumiverse.Redpanda
-```
+``` -->
 
 ## Configuration
 

@@ -52,10 +52,10 @@ jobs:
       with:
         node-version: ${{ env.NODEVERSION }}
         registry-url: https://registry.npmjs.org
-    - name: Setup DotNet
-      uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v4
-      with:
-        dotnet-version: ${{ env.DOTNETVERSION }}
+    # - name: Setup DotNet
+    #   uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v4
+    #   with:
+    #     dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
       uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5
       with:
@@ -75,8 +75,8 @@ jobs:
       run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
     - name: Build SDK
       run: make build_${{ matrix.language }}
-    # - name: Check worktree clean
-    #   run: ./ci-scripts/ci/check-worktree-is-clean
+    - name: Check worktree clean
+      run: ./ci-scripts/ci/check-worktree-is-clean
     - name: Compress SDK folder
       run: tar -zcf sdk/${{ matrix.language }}.tar.gz -C sdk/${{ matrix.language }}
         .
@@ -91,7 +91,7 @@ jobs:
         language:
         - nodejs
         - python
-        - dotnet
+        # - dotnet
         - go
 
   prerequisites:
