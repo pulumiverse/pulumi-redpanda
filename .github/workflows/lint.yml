@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
     - name: Install go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@19bb51245e9c80abacb2e91cc42b33fa478b8639 # v4
       with:
         # The versions of golangci-lint and setup-go here cross-depend and need to update together.
         go-version: 1.21
@@ -37,7 +37,7 @@ jobs:
       run: make upstream
     - run: cd provider && go mod tidy
     - name: golangci-lint
-      uses: golangci/golangci-lint-action@v3
+      uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3
       with:
         version: v1.54.1
         working-directory: provider
