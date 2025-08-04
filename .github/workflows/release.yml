@@ -49,7 +49,7 @@ jobs:
         with:
           repo: pulumi/pulumictl
       - name: Set PreRelease Version
-        run: echo "GORELEASER_CURRENT_TAG=v$(pulumictl get version --language generic)" >> $GITHUB_ENV
+        run: echo "GORELEASER_CURRENT_TAG=${{ github.ref_name }}" >> $GITHUB_ENV
       - uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
       - uses: anchore/sbom-action/download-syft@e8d2a6937ecead383dfe75190d104edd1f9c5751 # v0.16.0
       - name: Run GoReleaser
