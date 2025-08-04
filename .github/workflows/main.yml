@@ -57,7 +57,7 @@ jobs:
     #   with:
     #     dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
-      uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: ${{ env.PYTHONVERSION }}
     - name: Download provider + tfgen binaries
@@ -187,7 +187,7 @@ jobs:
     #   with:
     #     dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
-      uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: ${{ env.PYTHONVERSION }}
     - name: Download provider + tfgen binaries
