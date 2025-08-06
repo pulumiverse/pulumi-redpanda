@@ -11,7 +11,6 @@ replace github.com/hashicorp/terraform-plugin-framework => github.com/hashicorp/
 replace github.com/hashicorp/terraform-plugin-framework-validators => github.com/hashicorp/terraform-plugin-framework-validators v0.17.0
 
 require (
-	github.com/pulumi/pulumi-terraform-bridge/pf v0.49.0
 	github.com/pulumi/pulumi-terraform-bridge/v3 v3.111.0
 	github.com/redpanda-data/terraform-provider-redpanda v1.1.0
 )
@@ -73,10 +72,11 @@ require (
 	github.com/ettle/strcase v0.1.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/frankban/quicktest v1.14.4 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.2 // indirect
 	github.com/go-git/go-git/v5 v5.16.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -182,6 +182,7 @@ require (
 	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/teekennedy/goldmark-markdown v0.3.0 // indirect
 	github.com/texttheater/golang-levenshtein v1.0.1 // indirect
 	github.com/twmb/franz-go v1.18.1 // indirect

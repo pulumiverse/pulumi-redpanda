@@ -41,7 +41,7 @@ prepare::
 		find ./ ! -path './.git/*' -type f -exec sed -i '' 's/[a]bc/${ORG}/g' {} \; &> /dev/null; \
 	fi
 
-.PHONY: development provider build_sdks build_nodejs build_dotnet build_go build_python cleanup
+.PHONY: development provider build_sdks build_nodejs build_dotnet build_go build_python cleanup upstream
 
 development:: install_plugins provider lint_provider build_sdks install_sdks cleanup # Build the provider & SDKs for a development environment
 
@@ -124,4 +124,7 @@ install_sdks:: install_dotnet_sdk install_python_sdk install_nodejs_sdk
 
 test::
 	cd examples && go test -v -tags=all -parallel ${TESTPARALLELISM} -timeout 2h
+
+upstream:: # prepare upstream dependencies
+	cd provider && go mod tidy
 
