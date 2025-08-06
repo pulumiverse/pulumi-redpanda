@@ -28,6 +28,10 @@ jobs:
         go-version: 1.23
         # Either this action or golangci-lint needs to disable the cache
         cache: false
+    - name: Install pulumictl
+      uses: jaxxstorm/action-install-gh-release@25d5e2dd555cd74f1fab9ac1e6ea117acde2c0c4 # v1.12.0
+      with:
+        repo: pulumi/pulumictl
     - name: disarm go:embed directives to enable lint
       continue-on-error: true # this fails if there are no go:embed directives
       run: |
