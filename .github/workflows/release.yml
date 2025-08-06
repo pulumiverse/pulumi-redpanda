@@ -25,7 +25,7 @@ env:
   # DOTNETVERSION: |
   #     6.0.x
   #     3.1.301
-  GOVERSION: 1.22.x
+  GOVERSION: 1.23.x
   GRADLEVERSION: "7.6"
   JAVAVERSION: "11"
   NODEVERSION: 20.x
