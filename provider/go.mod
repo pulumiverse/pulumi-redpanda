@@ -166,7 +166,7 @@ require (
 	github.com/pulumi/pulumi/pkg/v3 v3.185.0 // indirect
 	github.com/pulumi/pulumi/sdk/v3 v3.185.0 // indirect
 	github.com/pulumi/schema-tools v0.1.2 // indirect
-	github.com/redpanda-data/redpanda/src/go/rpk v0.0.0-20250324141452-c979dc730ef3 // indirect
+	github.com/redpanda-data/redpanda/src/go/rpk v0.0.0-20260820072051-3cfce474a872 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
